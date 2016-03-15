@@ -1,0 +1,35 @@
+<div class="container container-small">
+	<!--<img src="img/logo-red.jpg" alt="Austral" class="margin-b-xl">-->
+	<div class="margin-b-xl">
+		<h3 class="margin-n"><strong>Login</strong></h3>
+	</div>
+
+	<form class="form-horizontal" ng-submit="liCtrl.login()">
+		<div class="form-group">
+			<div class="col-md-5 control-label">
+				<label for="username" class="margin-b-n"><strong class="text-danger">*</strong> Username</label>
+				<i class="fa fa-spinner pull-right fa-lg fa-spin" ng-show="suCtrl.checkingUsername"></i>
+				<i class="fa fa-check pull-right fa-lg" ng-show="suCtrl.availableUsername"></i>
+			</div>
+			<div class="col-md-7">
+				<input type="text" class="form-control" id="username" name="username" ng-model="liCtrl.loginDetails.username" required>
+			</div>
+		</div>
+
+		<!--form-group-->
+		<div class="form-group">
+			<div class="col-md-5 control-label">
+				<label for="password" class="margin-b-n"><strong class="text-danger">*</strong> Password</label>
+			</div>
+			<div class="col-md-7">
+				<input type="password" class="form-control" id="password" min="6" max="20" name="password" required ng-model="liCtrl.loginDetails.password">
+			</div>
+		</div>
+
+		<div class="form-group text-center" ng-show="liCtrl.loginError">
+			<p class="text-danger">{{liCtrl.errorMessage}}</p>
+		</div>
+			
+		<button class="btn btn-primary btn-block margin-b-l"  type="submit">Login</button>
+	</form>
+</div>

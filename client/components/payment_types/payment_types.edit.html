@@ -1,0 +1,45 @@
+<h2>PaymentType</h2>
+<ul>
+	<div class="container container-small">
+		<div ui-view class="slide">
+			<form class="form-horizontal" layout="column" ng-submit="editPaymentType(paymentType)">
+      
+			  <!--form-group-->
+        <div class="form-group">
+          <div class="col-md-5 control-label">
+            <label for="code" class="margin-b-n"><strong class="text-danger">*</strong> code</label>
+            <!--<i class="fa fa-spinner pull-right fa-lg fa-spin" ng-show="checkingcode"></i>
+            <i class="fa fa-check pull-right fa-lg" ng-show="availablecode"></i>-->
+          </div>
+          <div class="col-md-7">
+            <input type="text" class="form-control" id="code" name="code" ng-model="paymentType.code" required>
+          </div>
+        </div>
+        <!--form-group-->
+        <div class="form-group">
+          <div class="col-md-5 control-label">
+            <label for="name" class="margin-b-n"><strong class="text-danger">*</strong> Name</label>
+            <!--<i class="fa fa-spinner pull-right fa-lg fa-spin" ng-show="checkingname"></i>
+            <i class="fa fa-check pull-right fa-lg" ng-show="availablename"></i>-->
+          </div>
+          <div class="col-md-7">
+            <input type="text" class="form-control" id="name" name="name" ng-model="paymentType.name" required>
+          </div>
+        </div>
+        <!--form-group-->
+        <div class="form-group">
+          <div class="col-md-5 control-label">
+            <label for="description" class="margin-b-n"><strong class="text-danger">*</strong> Description</label>
+            <!--<i class="fa fa-spinner pull-right fa-lg fa-spin" ng-show="checkingdescription"></i>
+            <i class="fa fa-check pull-right fa-lg" ng-show="availabledescription"></i>-->
+          </div>
+          <div class="col-md-7">
+            <input type="text" class="form-control" id="description" name="description" ng-model="paymentType.description" required>
+          </div>
+        </div>
+			
+				<button class="btn btn-primary btn-block margin-b-l"  type="submit">Send</button>
+			</form>
+		</div>
+	</div>
+</ul>

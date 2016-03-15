@@ -1,0 +1,38 @@
+@import "assets/styles/styles";
+
+.text-danger {
+	color: #a94442;
+}
+.custom-progress {
+	height: 7px;
+	z-index: 100;
+	position: fixed;
+	top: 0px;
+	width: 100%;
+	margin-bottom: 0px;
+}
+.show-black-out {
+	display: block;
+}
+.display-company {
+	min-height: 35px;
+	h5 {
+		font-size: 16px;
+		margin-bottom: 5px;
+		margin-top: 5px;
+	}
+}
+.left-panel {
+	.title {
+		a {
+			color:#7a93ab;
+			&:hover{
+				color:#9cb5cd;
+			} 
+		}
+	}
+}
+
+.main-container {
+	margin-top: 50px; 
+}

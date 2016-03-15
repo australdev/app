@@ -1,0 +1,26 @@
+<nav class="navbar navbar-default navbar-fixed-top">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main_navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a ui-sref="main" class="navbar-brand">Home</a>
+    </div>
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="main_navbar">
+      <ul class="nav navbar-nav">
+        <li ng-class="{active: $state.includes('paymentTypes')}"><a ui-sref="paymentTypes.list">Payment Types</a></li>
+        <li ng-class="{active: $state.includes('frequencies')}"><a ui-sref="frequencies.list">Frequencies</a></li>
+        <li ng-class="{active: $state.includes('app.students')}"><a ui-sref="students.list">Students</a></li>
+        <li ng-class="{active: $state.includes('paymentTypes')}"><a ui-sref="courseTypes.list">Course Types</a></li>
+        <li ng-class="{active: $state.includes('institutions')}"><a ui-sref="institutions.list">Institutions</a></li>
+        <li ng-class="{active: $state.includes('coes,coes.studyPeriods,coes.studyPeriods.payments')}"><a ui-sref="coes.list">Coes</a></li>
+        <li ng-class="{active: $state.includes('payments')}"><a ui-sref="payments.list">Payments</a></li>
+        <li ng-class="{active: $state.includes('balances')}"><a ui-sref="balances.list">Balance</a></li>
+      </ul>
+    </div>
+</nav>

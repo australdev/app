@@ -1,0 +1,60 @@
+<h2>Frequency</h2>
+<ul>
+	<div class="container container-small">
+		<div ui-view class="slide">
+			<form class="form-horizontal" layout="column" ng-submit="editFrequency(frequency)">
+      
+			  <!--form-group-->
+        <div class="form-group">
+          <div class="col-md-5 control-label">
+            <label for="code" class="margin-b-n"><strong class="text-danger">*</strong> Code</label>
+            <!--<i class="fa fa-spinner pull-right fa-lg fa-spin" ng-show="checkingcode"></i>
+            <i class="fa fa-check pull-right fa-lg" ng-show="availablecode"></i>-->
+          </div>
+          <div class="col-md-7">
+            <input type="text" class="form-control" id="code" name="code" ng-model="frequency.code" required>
+          </div>
+        </div>
+        
+        <!--form-group-->
+        <div class="form-group">
+          <div class="col-md-5 control-label">
+            <label for="description" class="margin-b-n"><strong class="text-danger">*</strong> Description</label>
+            <!--<i class="fa fa-spinner pull-right fa-lg fa-spin" ng-show="checkingdescription"></i>
+            <i class="fa fa-check pull-right fa-lg" ng-show="availabledescription"></i>-->
+          </div>
+          <div class="col-md-7">
+            <input type="text" class="form-control" id="description" name="description" ng-model="frequency.description" required>
+          </div>
+        </div>
+        
+        <!--form-group-->
+        <div class="form-group">
+          <div class="col-md-5 control-label">
+            <label for="periodicity" class="margin-b-n"><strong class="text-danger">*</strong> Periodicity</label>
+            <!--<i class="fa fa-spinner pull-right fa-lg fa-spin" ng-show="checkingperiodicity"></i>
+            <i class="fa fa-check pull-right fa-lg" ng-show="availableperiodicity"></i>-->
+          </div>
+          <div class="col-md-7">
+            <input type="text" class="form-control" id="periodicity" name="periodicity" ng-model="frequency.periodicity" required>
+          </div>
+        </div>
+        
+        <!--form-group-->
+       <div class="form-group">
+        <div class="col-md-5 control-label">
+          <label for="periodicity" class="margin-b-n"><strong class="text-danger">*</strong> Frequency</label>
+        </div>
+        <div class="col-md-7">
+          
+          <select class="form-control" id="minPeriod" name="minPeriod" required ng-options="periodicity._id as periodicity.name for periodicity in periodicities" ng-model="frequency.minPeriod._id" >
+            <option></option>
+          </select>
+                </div>
+        </div>
+			
+				<button class="btn btn-primary btn-block margin-b-l"  type="submit">Send</button>
+			</form>
+		</div>
+	</div>
+</ul>

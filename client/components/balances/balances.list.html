@@ -1,0 +1,57 @@
+<ul>
+  <button class="btn btn-default" ng-click="downloadSearch(balances)">
+    <span class="glyphicon glyphicon-save-file" aria-hidden="true"></span>
+  </button> 
+  <div class="container">
+		<div ui-view class="slide">
+			<form class="form-horizontal" layout="column" ng-submit="searchBalance(balanceSearch)">
+      
+    <div class="row">
+    
+            <!--form-group-->
+            <div class="form-group">
+              <div class="col-md-5 control-label">
+                <label for="institution" class="margin-b-n"><strong class="text-danger">*</strong> Institution</label>
+              </div>
+              <div class="col-md-7">
+                <select class="form-control" id="institution" name="institution" ng-options="institution._id as institution.name for institution in institutions" ng-model="balanceSearch.institution._id" >
+                  <option></option>
+                </select>
+              </div>
+            </div>
+    </div>
+            
+    
+            <button class="btn btn-primary btn-block margin-b-l"  type="submit">Send</button>
+          </form>
+        </div>
+      </div>
+      
+      <table class="table table-striped table-hover">
+    <thead>
+      <tr>
+        <th>Institution</th>
+        <th>Student</th>
+        <th>Expected Commission</th>
+        <th>Expected Gts</th>
+        <th>Total Expected</th>
+        <th>Received Amount</th>
+        <th>Remaining Amount</th>
+	  </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="balance in balances" >
+          <td>{{ balance.coe.institution.name }}</td>
+          <td>{{ balance.coe.student.name}}</td>
+          <td>{{ balance.expectedCommission}}</td>
+          <td>{{ balance.expectedGts }}</td>
+          <td>{{ balance.expectedAmount }}</td>
+          <td>{{ balance.receivedAmount }}</td>
+          <td>{{ balance.remainingAmount }}</td>
+      </tr>
+    </tbody>
+  </table>
+  <button class="btn btn-default" ng-click="downloadSearch(balances)">
+    <span class="glyphicon glyphicon-save-file" aria-hidden="true"></span>
+  </button> 
+</ul>

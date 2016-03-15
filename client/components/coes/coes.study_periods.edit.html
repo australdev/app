@@ -1,0 +1,127 @@
+<ul>
+        <a ui-sref="coes.studyPeriods.list({coeId:coeId})">
+                <button class="btn btn-default">
+                        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                </button> 
+        </a>
+        <div class="container">
+                
+                <div ui-view class="slide">
+                        <form class="form-horizontal" ng-submit="editStudyPeriod(studyPeriod, coe)">
+                        <div class="row">
+                                <!--form-group-->
+                                <div class="form-group col-xs-6">
+                                        <div class="col-md-5 control-label">
+                                                <label for="description" class="margin-b-n"> Description</label>
+                                                <!--<i class="fa fa-spinner pull-right fa-lg fa-spin" ng-show="checkingdescription"></i>
+                                                <i class="fa fa-check pull-right fa-lg" ng-show="availabledescription"></i>-->
+                                        </div>
+                                        <div class="col-md-7">
+                                                <input type="text" class="form-control" id="description" name="description" ng-model="studyPeriod.description">
+                                        </div>
+                                </div>
+        
+                                <!--form-group-->
+                                <div class="form-group col-xs-6">
+                                        <div class="col-md-5 control-label">
+                                                <label for="startDate" class="margin-b-n"><strong class="text-danger">*</strong> Start Date</label>
+                                                <!--<i class="fa fa-spinner pull-right fa-lg fa-spin" ng-show="checking_ATt_Value"></i>
+        <i class="fa fa-check pull-right fa-lg" ng-show="available_ATt_Value"></i>-->
+                                        </div>
+                                        <div class="col-md-7">
+                                                <input type="date" class="form-control" id="startDate" name="startDate" ng-model="studyPeriod.startDate">
+                                        </div>
+                                        <!--<div class="form-group" ng-show="available_ATt_ == false"><p class="pull-right text-danger" >_att_display already been taken</p></div>-->
+                                </div>
+                       </div>
+                       
+                       <div class="row">
+                                <!--form-group-->
+                                <div class="form-group col-xs-6">
+                                        <div class="col-md-5 control-label">
+                                                <label for="endDate" class="margin-b-n"><strong class="text-danger">*</strong> End Date</label>
+                                                <!--<i class="fa fa-spinner pull-right fa-lg fa-spin" ng-show="checking_ATt_Value"></i>
+        <i class="fa fa-check pull-right fa-lg" ng-show="available_ATt_Value"></i>-->
+                                        </div>
+                                        <div class="col-md-7">
+                                                <input type="date" class="form-control" id="endDate" name="endDate" ng-model="studyPeriod.endDate">
+                                        </div>
+                                        <!--<div class="form-group" ng-show="available_ATt_ == false"><p class="pull-right text-danger" >_att_display already been taken</p></div>-->
+                                </div>
+        
+                                <!--form-group-->
+                                <div class="form-group col-xs-6">
+                                        <div class="col-md-5 control-label">
+                                                <label for="periodFee" class="margin-b-n"><strong class="text-danger">*</strong> Period Fee</label>
+                                                <!--<i class="fa fa-spinner pull-right fa-lg fa-spin" ng-show="checkingperiodFee"></i>
+        <i class="fa fa-check pull-right fa-lg" ng-show="availableperiodFee"></i>-->
+                                        </div>
+                                        <div class="col-md-7">
+                                                <input type="text" class="form-control" id="periodFee" name="periodFee" ng-model="studyPeriod.periodFee" required>
+                                        </div>
+                                </div>
+                         </div>
+        
+                         <div class="row">
+                                <!--form-group-->
+                                <div class="form-group col-xs-6">
+                                        <div class="col-md-5 control-label">
+                                                <label for="commPerc" class="margin-b-n"><strong class="text-danger">*</strong> Comm (%)</label>
+                                                <!--<i class="fa fa-spinner pull-right fa-lg fa-spin" ng-show="checkingcommPerc"></i>
+        <i class="fa fa-check pull-right fa-lg" ng-show="availablecommPerc"></i>-->
+                                        </div>
+                                        <div class="col-md-7">
+                                                <input type="text" class="form-control" id="commPerc" name="commPerc" ng-model="studyPeriod.commPerc" required>
+                                        </div>
+                                </div>
+                                
+                                <!--form-group-->
+                                <div class="form-group col-xs-6">
+                                        <div class="col-md-5 control-label">
+                                                <label for="expectedComm" class="margin-b-n"><strong class="text-danger">*</strong> Comm ($)</label>
+                                                <!--<i class="fa fa-spinner pull-right fa-lg fa-spin" ng-show="checkingexpectedComm"></i>
+        <i class="fa fa-check pull-right fa-lg" ng-show="availableexpectedComm"></i>-->
+                                        </div>
+                                        <div class="col-md-7">
+                                                <input type="text" class="form-control" id="expectedComm" name="expectedComm" ng-model="studyPeriod.expectedComm" required>
+                                        </div>
+                                </div>
+                          </div>
+                          
+                          <div class="row">
+                                <!--form-group-->
+                                <div class="form-group col-xs-6">
+                                        <div class="col-md-5 control-label">
+                                                <label for="periodGts" class="margin-b-n"><strong class="text-danger">*</strong> GTS</label>
+                                                <!--<i class="fa fa-spinner pull-right fa-lg fa-spin" ng-show="checkingperiodGts"></i>
+        <i class="fa fa-check pull-right fa-lg" ng-show="availableperiodGts"></i>-->
+                                        </div>
+                                        <div class="col-md-7">
+                                                <input type="text" class="form-control" id="periodGts" name="periodGts" ng-model="studyPeriod.periodGts" required>
+                                        </div>
+                                </div>
+        
+                                <!--form-group-->
+                        <div class="form-group col-xs-6">
+                                <div class="col-md-5 control-label">
+                                <label for="frequency" class="margin-b-n"><strong class="text-danger">*</strong> Frequency</label>
+                                </div>
+                                <div class="col-md-7">
+                                
+                                <select class="form-control" id="frequency" name="frequency" required ng-options="frequency._id as frequency.description for frequency in frequencies" ng-model="studyPeriod.frequency._id" >
+                                <option></option>
+                                </select>
+                                        </div>
+                                </div>
+        
+                                <button class="btn btn-primary btn-block margin-b-l" type="submit">Send</button>
+                        </form>
+                        </div>
+                </div>
+        </div>
+        <a ui-sref="coes.studyPeriods.list({coeId:coeId})">
+                <button class="btn btn-default">
+                        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                </button> 
+        </a>
+</ul>

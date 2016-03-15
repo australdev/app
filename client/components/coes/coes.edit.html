@@ -1,0 +1,122 @@
+<ul>
+  <a ui-sref="coes.list">
+    <button class="btn btn-default">
+      <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+    </button> 
+  </a>
+    
+	<div class="container container-small">
+		<div ui-view class="slide">
+			<form class="form-horizontal" layout="column" ng-submit="editCoe(coe)">
+      
+			<!--form-group-->
+       <div class="form-group">
+        <div class="col-md-5 control-label">
+          <label for="student" class="margin-b-n"><strong class="text-danger">*</strong> Student</label>
+        </div>
+        <div class="col-md-7">
+          
+        <select class="form-control" id="student" name="student" required ng-options="student._id as student.name for student in students" ng-model="coe.student._id" >
+          <option></option>
+        </select>
+              </div>
+       </div>
+          
+      <!--form-group-->
+       <div class="form-group">
+        <div class="col-md-5 control-label">
+          <label for="institution" class="margin-b-n"><strong class="text-danger">*</strong> Institution</label>
+        </div>
+        <div class="col-md-7">
+          
+          <select class="form-control" id="institution" name="institution" required ng-options="institution._id as institution.name for institution in institutions" ng-model="coe.institution._id" >
+            <option></option>
+          </select>
+                </div>
+        </div>
+        
+        <!--form-group-->
+       <div class="form-group">
+        <div class="col-md-5 control-label">
+          <label for="courseType" class="margin-b-n"><strong class="text-danger">*</strong> Course Type</label>
+        </div>
+        <div class="col-md-7">
+          
+        <select class="form-control" id="courseType" name="courseType" required ng-options="courseType._id as courseType.name for courseType in courseTypes" ng-model="coe.courseType._id" >
+          <option></option>
+        </select>
+              </div>
+       </div>
+        
+        <!--form-group-->
+        <div class="form-group">
+          <div class="col-md-5 control-label">
+            <label for="courseCode" class="margin-b-n"><strong class="text-danger">*</strong> Student Code</label>
+            <!--<i class="fa fa-spinner pull-right fa-lg fa-spin" ng-show="checkingcourseCode"></i>
+            <i class="fa fa-check pull-right fa-lg" ng-show="availablecourseCode"></i>-->
+          </div>
+          <div class="col-md-7">
+            <input type="text" class="form-control" id="courseCode" name="courseCode" ng-model="coe.courseCode" required>
+          </div>
+        </div>
+        
+        <!--form-group-->
+        <div class="form-group">
+          <div class="col-md-5 control-label">
+            <label for="courseName" class="margin-b-n"><strong class="text-danger">*</strong> Program Name</label>
+            <!--<i class="fa fa-spinner pull-right fa-lg fa-spin" ng-show="checkingcourseName"></i>
+            <i class="fa fa-check pull-right fa-lg" ng-show="availablecourseName"></i>-->
+          </div>
+          <div class="col-md-7">
+            <input type="text" class="form-control" id="courseName" name="courseName" ng-model="coe.courseName" required>
+          </div>
+        </div>
+        
+        <!--form-group-->
+        <div class="form-group">
+          <div class="col-md-5 control-label">
+            <label for="startDate" class="margin-b-n"><strong class="text-danger">*</strong> Start Date</label>
+            <!--<i class="fa fa-spinner pull-right fa-lg fa-spin" ng-show="checking_ATt_Value"></i>
+            <i class="fa fa-check pull-right fa-lg" ng-show="available_ATt_Value"></i>-->
+          </div>
+          <div class="col-md-7">
+            <input type="date" class="form-control" id="startDate" name="startDate" ng-model="coe.startDate" >
+          </div>
+          <!--<div class="form-group" ng-show="available_ATt_ == false"><p class="pull-right text-danger" >_att_display already been taken</p></div>-->
+        </div>
+
+        <!--form-group-->
+        <div class="form-group">
+          <div class="col-md-5 control-label">
+            <label for="endDate" class="margin-b-n"><strong class="text-danger">*</strong> End date</label>
+            <!--<i class="fa fa-spinner pull-right fa-lg fa-spin" ng-show="checking_ATt_Value"></i>
+            <i class="fa fa-check pull-right fa-lg" ng-show="available_ATt_Value"></i>-->
+          </div>
+          <div class="col-md-7">
+            <input type="date" class="form-control" id="endDate" name="endDate" ng-model="coe.endDate" >
+          </div>
+          <!--<div class="form-group" ng-show="available_ATt_ == false"><p class="pull-right text-danger" >_att_display already been taken</p></div>-->
+          </div>
+
+        <!--form-group-->
+        <div class="form-group">
+          <div class="col-md-5 control-label">
+            <label for="tuitionFee" class="margin-b-n"><strong class="text-danger">*</strong> Tuition Fee</label>
+            <!--<i class="fa fa-spinner pull-right fa-lg fa-spin" ng-show="checkingtuitionFee"></i>
+            <i class="fa fa-check pull-right fa-lg" ng-show="availabletuitionFee"></i>-->
+          </div>
+          <div class="col-md-7">
+            <input type="text" class="form-control" id="tuitionFee" name="tuitionFee" ng-model="coe.tuitionFee" required>
+          </div>
+        </div>
+			
+				<button class="btn btn-primary btn-block margin-b-l"  type="submit">Send</button>
+			</form>
+		</div>
+	</div>
+  <a ui-sref="coes.list">
+    <button class="btn btn-default">
+      <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+    </button> 
+  </a>
+</ul>

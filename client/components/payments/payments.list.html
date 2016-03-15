@@ -1,0 +1,110 @@
+<ul>
+  <button class="btn btn-default" ng-click="downloadSearch(payments)">
+    <span class="glyphicon glyphicon-save-file" aria-hidden="true"></span>
+  </button> 
+  <div class="container">
+		<div ui-view class="slide">
+			<form class="form-horizontal" layout="column" ng-submit="searchPayments(paymentSearch)">
+      
+    <div class="row">
+        <!--form-group-->
+          <div class="form-group col-xs-6">
+            <div class="col-md-5 control-label">
+              <label for="student" class="margin-b-n"><strong class="text-danger">*</strong> Student</label>
+            </div>
+            <div class="col-md-7">
+              
+            <select class="form-control" id="student" name="student" ng-options="student._id as student.name for student in students" ng-model="paymentSearch.student._id" >
+              <option></option>
+            </select>
+                  </div>
+          </div>
+              
+            <!--form-group-->
+            <div class="form-group col-xs-6">
+              <div class="col-md-5 control-label">
+                <label for="institution" class="margin-b-n"><strong class="text-danger">*</strong> Institution</label>
+              </div>
+              <div class="col-md-7">
+                <select class="form-control" id="institution" name="institution" ng-options="institution._id as institution.name for institution in institutions" ng-model="paymentSearch.institution._id" >
+                  <option></option>
+                </select>
+              </div>
+            </div>
+    </div>
+            
+    <div class="row">
+        <!--form-group-->
+          <div class="form-group col-xs-6">
+              <div class="col-md-5 control-label">
+                <label for="startDate" class="margin-b-n"><strong class="text-danger">*</strong> Start Date</label>
+                <!--<i class="fa fa-spinner pull-right fa-lg fa-spin" ng-show="checking_ATt_Value"></i>
+                <i class="fa fa-check pull-right fa-lg" ng-show="available_ATt_Value"></i>-->
+              </div>
+              <div class="col-md-7">
+                <input type="date" class="form-control" id="startDate" name="startDate" ng-model="paymentSearch.startDate" >
+              </div>
+              <!--<div class="form-group" ng-show="available_ATt_ == false"><p class="pull-right text-danger" >_att_display already been taken</p></div>-->
+            </div>
+    
+            <!--form-group-->
+            <div class="form-group col-xs-6">
+              <div class="col-md-5 control-label">
+                <label for="endDate" class="margin-b-n"><strong class="text-danger">*</strong> End date</label>
+                <!--<i class="fa fa-spinner pull-right fa-lg fa-spin" ng-show="checking_ATt_Value"></i>
+                <i class="fa fa-check pull-right fa-lg" ng-show="available_ATt_Value"></i>-->
+              </div>
+              <div class="col-md-7">
+                <input type="date" class="form-control" id="endDate" name="endDate" ng-model="paymentSearch.endDate" >
+              </div>
+              <!--<div class="form-group" ng-show="available_ATt_ == false"><p class="pull-right text-danger" >_att_display already been taken</p></div>-->
+              </div>
+    </div>
+            <button class="btn btn-primary btn-block margin-b-l"  type="submit">Send</button>
+          </form>
+        </div>
+      </div>
+      
+      <table class="table table-striped table-hover">
+    <thead>
+      <tr>
+        <th>Institution</th>
+        <th>Student</th>
+        <th>Payment Type</th>
+        <th>Description</th>
+        <th>Course Payment</th>
+        <!-- <th>Frequency</th> -->
+        <th>Comm (%)</th>
+        <th>Comm ($)</th>
+        <th>GTS</th>
+        <th>Expected Date</th>
+        <th>Expected ($)</th>
+        <th>Received On</th>
+        <th>Received ($)</th>
+        <th>Invoice #</th>
+        
+	  </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="payment in payments" ng-class="{'text-danger': isOverdue(payment)}">
+          <td>{{ payment.studyPeriod.coe.institution.name }}</td>
+          <td>{{ payment.studyPeriod.coe.student.name}}</td>
+          <td>{{ payment.paymentType.name}}</td>
+          <td>{{ payment.description }}</td>
+          <td>{{ payment.coursePayment }}</td>
+          <!-- <td>{{ payment.frequency }}</td> -->
+          <td>{{ payment.commPerc }}</td>
+          <td>{{ payment.expectedComm }}</td>
+          <td>{{ payment.paymentGts }}</td>
+          <td>{{ payment.expectedDate | date:'dd-MM-yyyy' }}</td>
+          <td>{{ payment.expectedValue }}</td>
+          <td>{{ payment.receivedDate | date:'dd-MM-yyyy' }}</td>
+          <td>{{ payment.receivedValue }}</td>
+          <td>{{ payment.invoice }}</td>
+      </tr>
+    </tbody>
+  </table>
+  <button class="btn btn-default" ng-click="downloadSearch(payments)">
+    <span class="glyphicon glyphicon-save-file" aria-hidden="true"></span>
+  </button> 
+</ul>

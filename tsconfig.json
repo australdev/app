@@ -1,0 +1,29 @@
+{
+    "compilerOptions": {
+        "target": "es5",
+        "module": "commonjs",
+        "declaration": false,
+        "noImplicitAny": true,
+        "suppressImplicitAnyIndexErrors": true,
+        "removeComments": true,
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "sourceMap": false
+    },
+    "compileOnSave": false,
+    "filesGlob": [
+        "./tools/**/*.ts",
+        "!./tools/typings/tsd/**",
+        "./tools/typings/tsd/tsd.d.ts",
+        "./gulpfile.ts",
+        "./client/**/*.ts",
+        "./server/**/*.ts",
+        "!./dist/**",
+        "!./test/**",
+        "!.tmp/**",
+        "!./node_modules/**"
+    ],
+    "atom": {
+        "rewriteTsconfig": true
+    }    
+}
