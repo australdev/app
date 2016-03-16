@@ -92,5 +92,15 @@ export class ObjectUtil {
 			return data;
 		}
 	}
+	
+	static getPropsCount(data: any): number {
+		let count = 0;
+		for (let prop in data) {
+			if (ObjectUtil.isPresent(data[prop])) {
+				count++;	
+			}
+		}
+		return count;
+	}
 }
 

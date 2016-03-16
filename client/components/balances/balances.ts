@@ -11,6 +11,7 @@ namespace balances {
 		const url = '/api/balance';
 		const url_student = '/api/student';
 		const url_institution = '/api/institution';
+		const url_coe = '/api/coe';
 		
 		$stateProvider
 			.state('main.balances', {
@@ -50,21 +51,34 @@ namespace balances {
 					'': {
 						templateUrl: 'components/balances/balances.list.html',
 								// You can pair a controller to your template. There *must* be a template to pair with.
-						controller: ['$scope', '$state', '$stateParams', '$http',
-						function($scope: any, $state: any, $stateParams: any, $http: angular.IHttpService) {
+						controller: ['$scope', '$state', '$stateParams', '$http', 'toastr',
+						function($scope: any, $state: any, $stateParams: any, $http: angular.IHttpService, toastr: any) {
 							
 							$scope.balanceSearch = { payment: {} };
+							$scope.studyPeriodsAggGeneral = {};
 							
 							$http.get(`${url_institution}/_find`).then((resp: any) => {
-							$scope.institutions = resp.data['data'];
+								$scope.institutions = resp.data['data'];
 							});
 														
 							$scope.searchBalance = function (data: any)  {
+								
+								$scope.balances = {};
+								$scope.summary = {};
+								
 								$http.post(`${url}/_find`, data).then((resp) => {
 									if (resp.data['success']) {
 										$scope.balances = resp.data['data'];
+									} else {
+										toastr.info('There was an error the search could not be performed');
 									}
 								});
+								
+								if ($scope.balanceSearch.institution && $scope.balanceSearch.institution._id) {
+									$http.get(`${url_coe}/_find_agg_balance?_id=${$scope.balanceSearch.institution._id}`).then((resp) => {
+										$scope.summary = resp.data['data'];
+									});
+								}
 							};
 							
 							$scope.downloadSearch = function (data: any)  {

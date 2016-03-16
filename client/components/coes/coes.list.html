@@ -1,52 +1,92 @@
-<ul>     
-  <a ui-sref="main.coes.edit({coeId:coe._id})">
-    <button class="btn btn-default">
-      <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-    </button> 
-  </a>
-  <table class="table table-striped table-hover">
-    <thead>
-      <tr>
-        <th>Student</th>
-        <th>Institution</th>
-        <th>Course Type</th>
-        <th>Student Code</th>
-        <th>Name</th>
-        <th>Start Date</th>
-        <th>End date</th>
-        <th>Tuition Fee</th>
-	  </tr>
-    </thead>
-    <tbody>
-      <tr ng-repeat="coe in coes" >
-          <td>{{ coe.student.name }}</td>
-          <td>{{ coe.institution.name }}</td>
-          <td>{{ coe.courseType.name }}</td>
-          <td>{{ coe.courseCode }}</td>
-          <td>{{ coe.courseName }}</td>
-          <td>{{ coe.startDate | date:'dd-MM-yyyy' }}</td>
-          <td>{{ coe.endDate | date:'dd-MM-yyyy' }}</td>
-          <td>{{ coe.tuitionFee }}</td>
-          <td>
-            <button ng-click="deleteCoe({id:coe._id})" class="btn btn-default">
-              <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
-            </button>
-          </td>
-          <td>
-            <a ui-sref="main.coes.edit({coeId:coe._id})">
-              <button class="btn btn-default">
-                <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
-              </button>
-            </a>
-          </td>
-          <td>
-            <a ui-sref="main.coes.studyPeriods.list({coeId:coe._id})">
-              <button class="btn btn-default">
-                <span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span>
-              </button> 
-            </a>
-          </td>
-      </tr>
-    </tbody>
-  </table>
-</ul>
+<div class="row">
+  <div class="container">
+		<div ui-view class="slide">
+			<form class="form-horizontal" layout="row" ng-submit="loadCoes(coeParams)">
+      
+        <div class="row">
+        <!--form-group-->
+          <div class="form-group col-xs-6">
+            <div class="col-md-5 control-label">
+              <label for="student" class="margin-b-n"><strong class="text-danger">*</strong> Student</label>
+            </div>
+            <div class="col-md-7">
+                <input type="text" class="form-control" id="student" name="student" ng-model="coeParams.studentName" >
+            </div>
+          </div>
+              
+            <!--form-group-->
+            <div class="form-group col-xs-6">
+              <div class="col-md-5 control-label">
+                <label for="institution" class="margin-b-n"><strong class="text-danger">*</strong> Institution</label>
+              </div>
+              <div class="col-md-7">
+                  <input type="text" class="form-control" id="institution" name="institution" ng-model="coeParams.institutionName" >
+              </div>
+            </div>
+        </div>
+        
+				<button class="btn btn-primary btn-block margin-b-l"  type="submit">Send</button>
+			</form>
+		</div>
+	</div>
+</div>
+
+<div class="row space">
+</div>
+
+<div class="row">
+  <div class="container">
+		<div ui-view class="slide">
+      <a ui-sref="main.coes.edit({coeId:coe._id})">
+        <button class="btn btn-default">
+          <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+        </button> 
+      </a>
+      <table class="table table-striped table-hover">
+        <thead>
+          <tr>
+            <th>Student</th>
+            <th>Institution</th>
+            <th>Course Type</th>
+            <th>Student Code</th>
+            <th>Name</th>
+            <th>Start Date</th>
+            <th>End date</th>
+            <th>Tuition Fee</th>
+        </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="coe in coes" >
+              <td>{{ coe.student.name }}</td>
+              <td>{{ coe.institution.name }}</td>
+              <td>{{ coe.courseType.name }}</td>
+              <td>{{ coe.courseCode }}</td>
+              <td>{{ coe.courseName }}</td>
+              <td>{{ coe.startDate | date:'dd-MM-yyyy' }}</td>
+              <td>{{ coe.endDate | date:'dd-MM-yyyy' }}</td>
+              <td>{{ coe.tuitionFee }}</td>
+              <td>
+                <button ng-click="deleteCoe({id:coe._id})" class="btn btn-default">
+                  <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                </button>
+              </td>
+              <td>
+                <a ui-sref="main.coes.edit({coeId:coe._id})">
+                  <button class="btn btn-default">
+                    <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+                  </button>
+                </a>
+              </td>
+              <td>
+                <a ui-sref="main.coes.studyPeriods.list({coeId:coe._id})">
+                  <button class="btn btn-default">
+                    <span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span>
+                  </button> 
+                </a>
+              </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

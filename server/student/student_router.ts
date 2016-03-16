@@ -34,7 +34,8 @@ router.delete('/:id', (req, res) => {
 router.get('/_find', (req: express.Request, res: express.Response) => {
   const modelOptions: ModelOptions = {
     authorization: getAuthorizationData(req),
-    regularExpresion: true
+    regularExpresion: true,
+    sort: 'name'
   };
   studentService.find(req.query, modelOptions)
     .then((students: Student[]) => formatSend(res, students), (err: any) => sendError(res, err));

@@ -1,6 +1,6 @@
 import {Model, Document} from 'mongoose';
 
-import {BaseDto, ModelOptions, AuthorizationData} from '../../client/core/dto';
+import {BaseDto, ModelOptions, AuthorizationData, FilterResponse} from '../../client/core/dto';
 import {ObjectUtil} from '../../client/core/util';
 import {DatabaseObjectUtil} from './db_util';
 import {BaseAuthorizationService} from './base_authorization_service';
@@ -22,7 +22,8 @@ export abstract class BaseService<T extends BaseDto> extends BaseAuthorizationSe
 			requireAuthorization: true,
 			copyAuthorizationData: '', // By default is going to try to copy the current user information
 			onlyValidateParentAuthorization: false, // Skip validations at immediate document level
-			validatePostSearchAuthData: true
+			validatePostSearchAuthData: true,
+			sort: '-createdAt'
 		};
 		ObjectUtil.merge(this.options, options);		
 	}
@@ -277,7 +278,7 @@ export abstract class BaseService<T extends BaseDto> extends BaseAuthorizationSe
 			this.transactionModelOptionsAddData(data, txModelOptions);	
 			const search = this.obtainSearchExpression(data, txModelOptions);
 			this.Model.find(search, txModelOptions.projection,
-			 { sort: '-createdAt', lean: true }).populate(txModelOptions.population)
+			 { sort: newOptions.sort, lean: true }).populate(txModelOptions.population)
 			.exec((err, foundObjs) => {
 				if (err) {
 					return reject(err);
@@ -322,7 +323,7 @@ export abstract class BaseService<T extends BaseDto> extends BaseAuthorizationSe
 			if (Object.keys(data).length < 1) {
 				reject(new Error('At least one filter value should be specified'));
 			}
-			this.Model.findOne(ObjectUtil.createFilter(data, false), null, { sort: '-createdAt', lean: true })
+			this.Model.findOne(ObjectUtil.createFilter(data, false), null, { sort: newOptions.sort, lean: true })
 			.exec((err, foundObj) => {
 				if (err) {
 					return reject(err);
@@ -348,7 +349,7 @@ export abstract class BaseService<T extends BaseDto> extends BaseAuthorizationSe
 			}
 			
 			this.Model.findOne(search, txModelOptions.projection,
-			 { sort: '-createdAt', lean: true }).populate(txModelOptions.population)
+			 { sort: newOptions.sort, lean: true }).populate(txModelOptions.population)
 			.exec((err: Error, foundObj: T) => {
 				if (err) {
 					return reject(err);
@@ -377,7 +378,7 @@ export abstract class BaseService<T extends BaseDto> extends BaseAuthorizationSe
 				return reject(new Error(authorizationResponse.errorMessage));
 			}
 			this.addAuthorizationDataPreSearch(txModelOptions);	
-			this.transactionModelOptionsAddData(data, txModelOptions);	
+			this.transactionModelOptionsAddData(data, txModelOptions);
 			const search = this.obtainSearchExpression(data, txModelOptions);
 			this.Model.find(search).distinct(txModelOptions.distinct)
 			.exec((err, foundObjs) => {
@@ -385,6 +386,34 @@ export abstract class BaseService<T extends BaseDto> extends BaseAuthorizationSe
 					return reject(err);
 				}
 				resolve(foundObjs);
+			});
+		});
+	}
+	
+	// Find an array of properties (distinct) and stablishes whether there is a filter or not
+	findPreFilterResponse(data: any, newOptions: ModelOptions = {}, distinct = '_id'): Promise<FilterResponse> {
+		
+		return new Promise<FilterResponse>((resolve: Function, reject: Function) => {
+			
+			const performedSearch: FilterResponse = { 
+				wereThereFilters: false
+			};
+			
+			if (ObjectUtil.isBlank(data) || ObjectUtil.getPropsCount(data) === 0) {
+				return resolve(performedSearch);
+			}
+			
+			const filterModelOptions = ObjectUtil.clone(newOptions);
+			filterModelOptions.distinct = distinct;
+			
+			this.findDistinct(data, filterModelOptions)
+			.then((foundObjects: string[]) => {
+				performedSearch.wereThereFilters = true;
+				performedSearch.distinctArray = foundObjects;
+				resolve(performedSearch);
+			})
+			.catch((err) => {
+				reject(err);
 			});
 		});
 	}

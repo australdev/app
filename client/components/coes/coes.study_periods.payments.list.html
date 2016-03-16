@@ -1,4 +1,35 @@
-<ul>     
+<div class="row space">
+</div>
+
+<div class="container">
+  <div ui-view class="slide">
+      <div class="row">
+        <div class="form-group">          
+          <div class="col-md-6">
+            <table class="table table-striped table-hover">
+              <thead>
+                <tr>
+                  <th>Total Expected Per Study Period</th>
+                  <th>Total Received Per Study Period</th>
+                  <th>Total Remaining Per Study Period</th>
+              </tr>
+              </thead>
+              <tbody>
+                <td>{{ summary.expectedPerStudyPeriod}}</td>
+                <td>{{ summary.receivedPerStudyPeriod}}</td>
+                <td>{{ (summary.expectedPerStudyPeriod - summary.receivedPerStudyPeriod)}}</td>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+  </div>
+</div>
+
+<div class="row space">
+</div>
+
+<div class="container">     
   <a ui-sref="main.coes.studyPeriods.list({studyPeriodId: studyPeriodId, coeId: coeId})">
     <button class="btn btn-default">
       <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
@@ -62,4 +93,4 @@
       <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
     </button> 
   </a>
-</ul>
+</div>

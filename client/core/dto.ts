@@ -64,6 +64,7 @@ export interface ModelOptions {
   copyAuthorizationData?: string;
   onlyValidateParentAuthorization?: boolean;
   validatePostSearchAuthData?: boolean;
+  sort?: string;
 }
 
 export interface Coe extends BaseDto {
@@ -202,4 +203,15 @@ export interface SocketNotification extends BaseDto {
   message?: string;
   parentsData?: any;
   data?: any;
+}
+
+export interface FilterResponse extends BaseDto {
+  wereThereFilters: boolean;
+  distinctArray?: string[];
+}
+
+export interface CoeFilter extends BaseDto {
+  student?: Student;
+  institution?: Institution;
+  coe?: Coe;
 }

@@ -27,13 +27,13 @@ export class BalanceService {
 			const institutionPopulation = {
 				path: 'institution', 
 				model: InstitutionModel,
-				select: 'name'
+				select: 'name monthsDivision'
 			};
 			
 			studyPeriodOptions.population = {
 				path: 'coe', 
 				model: CoeModel,
-				select: 'student institution',
+				select: 'student institution startDate endDate',
 				populate: [studentPopulation, institutionPopulation]
 			};
 		
@@ -55,8 +55,7 @@ export class BalanceService {
 					studyPeriodOptions.additionalData = { coe: { $in: results } };
 					return studyPeriodService.find({}, studyPeriodOptions);
 				} else {
-					reject(new Error('There are not coes with those filters'));	
-					return;
+					return reject(new Error('There are not coes with those filters'));	
 				}
 			})
 			.then((studyPeriods: StudyPeriod[]) => {
@@ -109,8 +108,6 @@ export class BalanceService {
 			});	
 		});
 	}
-	
-	
 	
 	private calculateReceivedPerStudyPeriod(data: StudyPeriod,  childrenModelOptions: ModelOptions = {}): Promise<StudyPeriod> {
 		const studyPeriodToSend: StudyPeriod = data;

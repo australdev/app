@@ -1,57 +1,93 @@
-<ul>
-  <button class="btn btn-default" ng-click="downloadSearch(balances)">
-    <span class="glyphicon glyphicon-save-file" aria-hidden="true"></span>
-  </button> 
-  <div class="container">
-		<div ui-view class="slide">
-			<form class="form-horizontal" layout="column" ng-submit="searchBalance(balanceSearch)">
-      
-    <div class="row">
-    
-            <!--form-group-->
+<div class="row space">
+</div>
+
+<div class="container">
+  <div ui-view class="slide">
+    <form class="form-horizontal" layout="column" ng-submit="searchBalance(balanceSearch)">
+
+      <div class="row">
+        <div class="form-group">
+          <div class="col-md-6">  
             <div class="form-group">
-              <div class="col-md-5 control-label">
+              <div class="col-md-4 control-label">
                 <label for="institution" class="margin-b-n"><strong class="text-danger">*</strong> Institution</label>
               </div>
-              <div class="col-md-7">
+              <div class="col-md-8">
                 <select class="form-control" id="institution" name="institution" ng-options="institution._id as institution.name for institution in institutions" ng-model="balanceSearch.institution._id" >
                   <option></option>
                 </select>
               </div>
             </div>
-    </div>
-            
-    
-            <button class="btn btn-primary btn-block margin-b-l"  type="submit">Send</button>
-          </form>
+          </div>
+          
+          <div class="col-md-6">
+            <table class="table table-striped table-hover">
+              <thead>
+                <tr>
+                  <th>Total Expected</th>
+                  <th>Total Received</th>
+                  <th>Total Remaining</th>
+                  <th>Division by Month</th>
+              </tr>
+              </thead>
+              <tbody>
+                <td>{{ summary.sp.expectedPerSchool}}</td>
+                <td>{{ summary.p.receivedPerCoe}}</td>
+                <td>{{ (summary.sp.expectedPerSchool - summary.p.receivedPerCoe)}}</td>
+                <td>{{ (summary.sp.expectedPerSchool - summary.p.receivedPerCoe) / balance.institution.monthsDivision }}</td>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
       
+
+      <button class="btn btn-primary btn-block margin-b-l"  type="submit">Send</button>
+    </form>
+  </div>
+</div>
+
+
+<div class="container">
+    <div class="row space">
+    </div>
+      
+    <button class="btn btn-default" ng-click="downloadSearch(balances)">
+      <span class="glyphicon glyphicon-save-file" aria-hidden="true"></span>
+    </button>
+  
+    <div class="row space">
+    </div>
+      
       <table class="table table-striped table-hover">
-    <thead>
-      <tr>
-        <th>Institution</th>
-        <th>Student</th>
-        <th>Expected Commission</th>
-        <th>Expected Gts</th>
-        <th>Total Expected</th>
-        <th>Received Amount</th>
-        <th>Remaining Amount</th>
-	  </tr>
-    </thead>
-    <tbody>
-      <tr ng-repeat="balance in balances" >
-          <td>{{ balance.coe.institution.name }}</td>
-          <td>{{ balance.coe.student.name}}</td>
-          <td>{{ balance.expectedCommission}}</td>
-          <td>{{ balance.expectedGts }}</td>
-          <td>{{ balance.expectedAmount }}</td>
-          <td>{{ balance.receivedAmount }}</td>
-          <td>{{ balance.remainingAmount }}</td>
+      <thead>
+        <tr>
+          <th>Institution</th>
+          <th>Student</th>
+          <th>Expected Commission</th>
+          <th>Expected Gts</th>
+          <th>Total Expected</th>
+          <th>Received Amount</th>
+          <th>Remaining Amount</th>
+          <th>Start Date</th>
+          <th>End Date</th>
       </tr>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+        <tr ng-repeat="balance in balances" >
+            <td>{{ balance.coe.institution.name }}</td>
+            <td>{{ balance.coe.student.name}}</td>
+            <td>{{ balance.expectedCommission}}</td>
+            <td>{{ balance.expectedGts }}</td>
+            <td>{{ balance.expectedAmount }}</td>
+            <td>{{ balance.receivedAmount }}</td>
+            <td>{{ balance.remainingAmount }}</td>
+            <td>{{ balance.coe.startDate | date:'dd-MM-yyyy' }}</td>
+            <td>{{ balance.coe.endDate | date:'dd-MM-yyyy' }}</td>
+        </tr>
+      </tbody>
+    </table>
   <button class="btn btn-default" ng-click="downloadSearch(balances)">
     <span class="glyphicon glyphicon-save-file" aria-hidden="true"></span>
   </button> 
-</ul>
+</div>

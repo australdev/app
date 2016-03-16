@@ -34,10 +34,29 @@ router.delete('/:id', (req, res) => {
 router.get('/_find', (req: express.Request, res: express.Response) => {
   const modelOptions: ModelOptions = {
     authorization: getAuthorizationData(req),
-    regularExpresion: true
+    regularExpresion: true,
+    sort: 'student.name'
   };
-  coeService.find(req.query, modelOptions)
+  coeService.findWithFilters(req.query, modelOptions)
     .then((coes: Coe[]) => formatSend(res, coes), (err: any) => sendError(res, err));
+});
+
+router.get('/_find_agg', (req: express.Request, res: express.Response) => {
+  const modelOptions: ModelOptions = {
+    authorization: getAuthorizationData(req),
+    additionalData: { institution: req.query._id }
+  };
+  coeService.aggregateReceivedAmountPerCoe(req.query, modelOptions)
+    .then((coe: Coe) => formatSend(res, coe), (err: any) => sendError(res, err));
+});
+
+router.get('/_find_agg_balance', (req: express.Request, res: express.Response) => {
+  const modelOptions: ModelOptions = {
+    authorization: getAuthorizationData(req),
+    additionalData: { institution: req.query._id }
+  };
+  coeService.aggregateForBalance(req.query, modelOptions)
+    .then((coe: Coe) => formatSend(res, coe), (err: any) => sendError(res, err));
 });
 
 router.get('/:id', (req: express.Request, res: express.Response) => {

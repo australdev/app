@@ -1,4 +1,4 @@
-﻿import {Payment, PaymentSearch, ModelOptions} from '../../client/core/dto';
+﻿import {Payment, PaymentSearch, ModelOptions, StudyPeriod, Coe} from '../../client/core/dto';
 import {PaymentModel, CoeModel, StudentModel, InstitutionModel} from '../core/model';
 import {BaseService} from '../core/base_service';
 import {ObjectUtil} from '../../client/core/util';
@@ -106,6 +106,55 @@ export class PaymentService extends BaseService<Payment> {
 				reject(err);
 				return;
 			});	
+		});
+	}
+	
+	aggregateReceivedAmountPerStudyPeriod(studyPeriod: StudyPeriod):  Promise<any> {
+		
+		return new Promise<any>((resolve: Function, reject: Function) => {
+			
+			const aggregationCondition = [
+				{ $match: { studyPeriod: studyPeriod._id } },
+				{ $group: { _id: '$studyPeriod' , 
+							expectedPerStudyPeriod: { $sum: '$expectedValue' },
+							receivedPerStudyPeriod: { $sum: '$receivedValue' } 
+						}
+				}
+			];
+			
+			this.Model.aggregate(aggregationCondition).exec((err, results) => {
+				if (err) {
+					return reject(err);
+				}
+			
+				resolve(results[0]);
+			});
+			
+		});
+	}
+	
+	aggregateReceivedAmountMultipleStudyPeriods(studyPeriodIds: string[], coe: Coe): Promise<any> {
+		
+		return new Promise<any>((resolve: Function, reject: Function) => {
+			
+			let fakeId: Coe = null;
+			const aggregationCondition = [
+				{ $match: { studyPeriod: { $in: studyPeriodIds } } },
+				{ $group: { _id: fakeId, 
+							expectedPerCoe: { $sum: '$expectedValue' },
+							receivedPerCoe: { $sum: '$receivedValue' } 
+						}
+				}
+			];
+			
+			this.Model.aggregate(aggregationCondition).exec((err, results) => {
+				if (err) {
+					return reject(err);
+				}
+				
+				resolve(results[0]);
+			});
+			
 		});
 	}
 }

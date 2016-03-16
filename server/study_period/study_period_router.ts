@@ -2,7 +2,7 @@ import * as express from 'express';
 
 import {sendError, formatSend, getAuthorizationData} from '../core/web_util';
 import {studyPeriodService} from './study_period_service';
-import {StudyPeriod, ModelOptions} from '../../client/core/dto';
+import {StudyPeriod, ModelOptions, Coe} from '../../client/core/dto';
 
 const router = express.Router();
 
@@ -38,6 +38,23 @@ router.get('/_find', (req: express.Request, res: express.Response) => {
   };
   studyPeriodService.find(req.query, modelOptions)
     .then((studyPeriods: StudyPeriod[]) => formatSend(res, studyPeriods), (err: any) => sendError(res, err));
+});
+
+router.get('/_find_agg_study', (req: express.Request, res: express.Response) => {
+  const modelOptions: ModelOptions = {
+    authorization: getAuthorizationData(req)
+  };
+  studyPeriodService.aggregateReceivedAmountPerStudyPeriod(req.query, modelOptions)
+    .then((studyPeriod: StudyPeriod) => formatSend(res, studyPeriod), (err: any) => sendError(res, err));
+});
+
+router.get('/_find_agg_coe', (req: express.Request, res: express.Response) => {
+  const modelOptions: ModelOptions = {
+    authorization: getAuthorizationData(req),
+    additionalData: { coe: req.query._id }
+  };
+  studyPeriodService.aggregateReceivedAmountPerCoe(req.query, modelOptions)
+    .then((coe: Coe) => formatSend(res, coe), (err: any) => sendError(res, err));
 });
 
 router.get('/_find_unpop', (req: express.Request, res: express.Response) => {

@@ -34,7 +34,8 @@ router.delete('/:id', (req, res) => {
 router.get('/_find', (req: express.Request, res: express.Response) => {
   const modelOptions: ModelOptions = {
     authorization: getAuthorizationData(req),
-    regularExpresion: true
+    regularExpresion: true,
+    sort: 'name'
   };
   institutionService.find(req.query, modelOptions)
     .then((institutions: Institution[]) => formatSend(res, institutions), (err: any) => sendError(res, err));

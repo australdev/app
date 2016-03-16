@@ -88,6 +88,7 @@ const schemas = {
 	institution: new Schema({
 		name: { type: String, required: true },
 		code: { type: String, required: true },
+		monthsDivision: { type: Number, required: true },
 		createdBy: { type: ObjectId, ref: 'user' },
 		createdAt: { type: Number },
 		updatedAt: { type: Number },

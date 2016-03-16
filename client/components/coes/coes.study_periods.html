@@ -1,12 +1,10 @@
 <div class="row">
-  <!-- <div class="span3">
-    <div class="pa-sidebar well well-small">
-      <ul >
-        <li ng-class="{ active: $state.includes('main.coes.studyPeriods.list') }"><a ui-sref="main.coes.studyPeriods.list">All StudyPeriods</a></li>
-      </ul>
+    <div class="row">
+        <div ui-view="sp-instant-content" class="span9 slide"></div>
     </div>
-  </div>
 
-  <!-- Our unnamed main ui-view for this template -->
-  <div ui-view class="span9 slide"></div>
+    <div class="row">
+      <!-- Our unnamed main ui-view for this template -->
+      <div ui-view="sp-table-content" class="span9 slide"></div>
+    </div>
 </div>

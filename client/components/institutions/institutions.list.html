@@ -9,12 +9,14 @@
       <tr>
         <th>Name</th>
         <th>Code</th>
+        <th>Months (division in balance)</th>
 	  </tr>
     </thead>
     <tbody>
       <tr ng-repeat="institution in institutions" >
           <td>{{ institution.name }}</td>
           <td>{{ institution.code }}</td>
+          <td>{{ institution.monthsDivision }}</td>
           <td>
             <button ng-click="deleteInstitution({id:institution._id})" class="btn btn-default">
               <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
