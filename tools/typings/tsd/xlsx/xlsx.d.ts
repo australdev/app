@@ -4,12 +4,9 @@
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
 
 declare module 'xlsx' {
-    
+
     export function readFile(filename:string, opts?:IParsingOptions):IWorkBook;
     export function read(data:any, opts?:IParsingOptions):IWorkBook;
-    export function write(wb:any, opts?:IParsingOptions): any;
-    export function writeFile(wb:any, filename:string, opts?:IParsingOptions): any;
-    export var SSF: any;
     export var utils:IUtils;
 
     export interface IProperties {
@@ -49,12 +46,6 @@ declare module 'xlsx' {
          * Possible options: 'binary', 'base64', 'buffer', 'file'
          */
         type?:string;
-        
-        /**
-         * Possible options: xlsx'
-         */
-        bookType?:string;
-        bookSST?:boolean;
     }
 
     export interface IWorkBook {
@@ -140,8 +131,6 @@ declare module 'xlsx' {
         sheet_to_json<T>(worksheet:IWorkSheet):T[];
         sheet_to_csv(worksheet:IWorkSheet):any;
         sheet_to_formulae(worksheet:IWorkSheet):any;
-        encode_cell(cell?: any): any;
-        encode_range(cs?: any, ce?: any): any;
     }
 
 }

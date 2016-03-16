@@ -29,4 +29,5 @@ dist
 test
 .tmp
 tools/typings/tsd
+!tools/typings/tsd/xlsx/xlsx.d.ts
 .idea
