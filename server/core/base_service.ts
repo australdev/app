@@ -20,166 +20,312 @@ export abstract class BaseService<T extends BaseDto> extends BaseAuthorizationSe
 			distinct: '',
 			authorization: {},
 			requireAuthorization: true,
-			copyAuthorizationData: true,
-			specialAuthorizationDataSearch: false
+			copyAuthorizationData: '', // By default is going to try to copy the current user information
+			onlyValidateParentAuthorization: false, // Skip validations at immediate document level
+			validatePostSearchAuthData: true
 		};
 		ObjectUtil.merge(this.options, options);		
 	}
 
 	createOne(data: T, newOptions: ModelOptions = {}): Promise<T> {
-		delete data._id;
-		const txModelOptions = this.obtainTransactionModelOptionsAndAddData(data, newOptions);
-		const newDocument = new this.Model(data);
 		return new Promise<T>((resolve: Function, reject: Function) => {
-			const authError = this.isCreateAuthorized(txModelOptions);
-			if (ObjectUtil.isPresent(authError)) {
-				reject(new Error(authError));
-				return;
+			delete data._id;
+			const txModelOptions = this.obtainTransactionModelOptions(newOptions);
+			const authorizationResponse = this.isCreateAuthorized(txModelOptions);
+			if (!authorizationResponse.isAuthorized) {
+				return reject(new Error(authorizationResponse.errorMessage));
 			}
+			this.addAuthorizationDataInCreate(txModelOptions); // Adds required authorization data in create	
+			this.transactionModelOptionsAddData(data, txModelOptions);
+			const newDocument = new this.Model(data);
 			newDocument.save((err: Error, savedDoc: any) => {
 				if (err) {
-					reject(err);
-					return;
+					return reject(err);
 				}
-				resolve(savedDoc.toObject());
+				savedDoc.populate(txModelOptions.population, (err: Error, populatedObj: any) => {
+					if (err) {
+						return reject(err);
+					}
+					return resolve(populatedObj.toObject());
+				});
 			});	
 		});		
 	}
 
-	updateOne(data: T, newOptions: ModelOptions = {}): Promise<T> {	
-		const txModelOptions = this.obtainTransactionModelOptionsAndAddData(data, newOptions);
+	preUpdateOne(data: T, newOptions: ModelOptions = {}): Promise<T> {	
 		return new Promise<T>((resolve: Function, reject: Function) => {
-			const authError = this.isUpdateAuthorized(txModelOptions, data);
-			if (ObjectUtil.isPresent(authError)) {
-				reject(new Error(authError));
-				return;
+			const authorizationResponse = this.isUpdateAuthorized(newOptions);
+			if (!authorizationResponse.isAuthorized) {
+				return reject(new Error(authorizationResponse.errorMessage));
 			}
-			this.Model.findById(data._id, (err: Error, foundDoc: any) => {
+			this.Model.findById(data._id, newOptions.projection)
+			.exec((err: Error, foundObj: any) => {
 				if (err) {
-					reject(err);
-					return;
+					return reject(err);
+				}
+			
+				if (ObjectUtil.isBlank(foundObj)) {
+					return reject(new Error('Object could not be found'));
 				}
 				
-				if (ObjectUtil.isBlank(foundDoc) || ObjectUtil.isPresent(foundDoc.deletedAt)) {
-					reject(new Error('Object could not be found'));
-					return;
-				}
 				
+				if (newOptions.validatePostSearchAuthData) {
+					const authorizationResponse = this.validateAuthDataPostSearchUpdate(newOptions, foundObj);
+					if (!authorizationResponse.isAuthorized) {
+						return reject(new Error(authorizationResponse.errorMessage));
+					}	
+				}
+					
+				resolve(foundObj);
+			});
+		});
+	}
+	
+	updateOne(data: T, newOptions: ModelOptions = {}): Promise<T> {	
+		return new Promise<T>((resolve: Function, reject: Function) => {
+			const txModelOptions = this.obtainTransactionModelOptions(newOptions);			
+			this.preUpdateOne(data, txModelOptions)
+			.then((objectToUpdate: any) => {
+								
 				for (let prop in data) {
-					foundDoc[prop] = data[prop];
+					objectToUpdate[prop] = data[prop];
 				}
-				foundDoc.save((err: Error, savedDoc: any) => {
+				
+				objectToUpdate.save((err: Error, savedDoc: any) => {
 					if (err) {
-						reject(err);
-						return;
+						return reject(err);
 					}
-					resolve(savedDoc.toObject());
+					savedDoc.populate(txModelOptions.population, (err: Error, populatedObj: any) => {
+						if (err) {
+							return reject(err);
+						}
+						resolve(populatedObj.toObject());
+					});
+				});
+			})
+			.catch((err) => reject(err));
+		});
+	}
+	
+	
+	updateOneFilter(data: T, newOptions: ModelOptions = {}): Promise<T> {	
+		return new Promise<T>((resolve: Function, reject: Function) => {
+			const txModelOptions = this.obtainTransactionModelOptions(newOptions);
+			const authorizationResponse = this.isUpdateAuthorized(txModelOptions);
+			if (!authorizationResponse.isAuthorized) {
+				return reject(new Error(authorizationResponse.errorMessage));
+			}
+			this.Model.find(data, txModelOptions.projection)
+			.exec((err: Error, foundObj: any) => {
+				if (err) {
+					return reject(err);
+				}
+			
+				if (ObjectUtil.isBlank(foundObj)) {
+					return reject(new Error('Object could not be found'));
+				}
+				
+				
+				if (txModelOptions.validatePostSearchAuthData) {
+					const authorizationResponse = this.validateAuthDataPostSearchUpdate(txModelOptions, foundObj);
+					if (!authorizationResponse.isAuthorized) {
+						return reject(new Error(authorizationResponse.errorMessage));
+					}	
+				}
+					
+				for (let prop in data) {
+					foundObj[prop] = data[prop];
+				}
+				
+				foundObj.save((err: Error, savedDoc: any) => {
+					if (err) {
+						return reject(err);
+					}
+					savedDoc.populate(txModelOptions.population, (err: Error, populatedObj: any) => {
+						if (err) {
+							return reject(err);
+						}
+						resolve(populatedObj.toObject());
+					});
 				});
 			});
 		});
 	}
 
-	removeOneById(id: string, newOptions: ModelOptions = {}): Promise<T> {
+	preRemoveOne(data: T, newOptions: ModelOptions = {}): Promise<T> {
 		return new Promise<T>((resolve: Function, reject: Function) => {	
 			const txModelOptions = this.obtainTransactionModelOptions(newOptions);
-			const authError = this.isRemoveAuthorized(txModelOptions);
-			if (ObjectUtil.isPresent(authError)) {
-				reject(new Error(authError));
-				return;
+			const authorizationResponse = this.isRemoveAuthorized(txModelOptions);
+			if (!authorizationResponse.isAuthorized) {
+				return reject(new Error(authorizationResponse.errorMessage));
+			}
+			this.addAuthorizationDataPreSearch(txModelOptions);	
+			this.transactionModelOptionsAddData(data, txModelOptions);	
+			const search = this.obtainSearchExpression(data, txModelOptions);
+			this.Model.findOne(search).populate(txModelOptions.population).exec((err: Error, foundDoc: any) => {
+				if (err) {
+					return reject(err);
+				}
+				if (ObjectUtil.isBlank(foundDoc)) {
+					return reject(new Error('Object could not be found'));
+				}
+				
+				if (txModelOptions.validatePostSearchAuthData) {
+					const authorizationResponse = this.validateAuthDataPostSearchRemove(txModelOptions, foundDoc);
+					if (!authorizationResponse.isAuthorized) {
+						return reject(new Error(authorizationResponse.errorMessage));
+					}	
+				}
+				
+				resolve(foundDoc);
+			});
+		});
+	}
+	
+	removeOne(data: T, newOptions: ModelOptions = {}): Promise<T> {
+		return new Promise<T>((resolve: Function, reject: Function) => {	
+			this.preRemoveOne(data, newOptions)
+			.then((objectToRemove: any) => {
+				objectToRemove.remove((err: Error) => {
+					if (err) {
+						return reject(err);
+					}
+					resolve(objectToRemove.toObject());
+				});
+			})
+			.catch((err) => reject(err));
+		});
+	}
+	
+	preRemoveOneById(id: string, newOptions: ModelOptions = {}): Promise<T> {
+		return new Promise<T>((resolve: Function, reject: Function) => {	
+			const txModelOptions = this.obtainTransactionModelOptions(newOptions);
+			const authorizationResponse = this.isRemoveAuthorized(txModelOptions);
+			if (!authorizationResponse.isAuthorized) {
+				return reject(new Error(authorizationResponse.errorMessage));
 			}
 			this.Model.findById(id).populate(txModelOptions.population).exec((err: Error, foundDoc: any) => {
 				if (err) {
-					reject(err);
-					return;
+					return reject(err);
 				}
-				if (ObjectUtil.isBlank(foundDoc) || ObjectUtil.isPresent(foundDoc.deletedAt)) {
-					reject(new Error('Object could not be found'));
-					return;
-				}
-				const authError = this.isRemoveAuthorizedExecution(txModelOptions, foundDoc);
-				if (ObjectUtil.isPresent(authError)) {
-					reject(new Error(authError));
+				if (ObjectUtil.isBlank(foundDoc)) {
+					return reject(new Error('Object could not be found'));
 				}
 				
-
-				foundDoc['deletedAt'] = Date.now();
-				
-				foundDoc.save((err: Error, savedDoc: any) => {
-					if (err) {
-						reject(err);
-						return;
-					}
-					resolve(savedDoc.toObject());
-				});
-				
+				if (txModelOptions.validatePostSearchAuthData) {
+					const authorizationResponse = this.validateAuthDataPostSearchRemove(txModelOptions, foundDoc);
+					if (!authorizationResponse.isAuthorized) {
+						return reject(new Error(authorizationResponse.errorMessage));
+					}	
+				}
+					
+				resolve(foundDoc);
 			});
 		});
 	}
-
+	
+	removeOneById(id: string, newOptions: ModelOptions = {}): Promise<T> {
+		return new Promise<T>((resolve: Function, reject: Function) => {	
+			this.preRemoveOneById(id, newOptions)
+			.then((objectToRemove: any) => {
+				objectToRemove.remove((err: Error) => {
+					if (err) {
+						return reject(err);
+					}
+					resolve(objectToRemove.toObject());
+				});
+			})
+			.catch((err) => reject(err));
+		});
+	}
+	
+	removeByFilter(data: T, newOptions: ModelOptions = {}): Promise<T[]> {
+		return new Promise<T[]>((resolve: Function, reject: Function) => {
+			const txModelOptions = this.obtainTransactionModelOptions(newOptions);
+			const authorizationResponse = this.isRemoveAuthorized(txModelOptions);
+			if (!authorizationResponse.isAuthorized) {
+				return reject(new Error(authorizationResponse.errorMessage));
+			}
+			this.addAuthorizationDataPreSearch(txModelOptions);	
+			this.transactionModelOptionsAddData(data, txModelOptions);
+			this.Model.find(ObjectUtil.createFilter(data)).populate(txModelOptions.population)
+			.exec((err, foundObjs) => {
+				if (err) {
+					return reject(err);
+				}
+				DatabaseObjectUtil.removeArrayPromise(foundObjs)
+				.then((results: any) => {
+					resolve(results);
+				})
+				.catch((err) => reject(err));	
+			});
+		});
+	}
+	
+	removeSkipingHooks(data: T) {
+		this.Model.remove(data, (err: any) => {});
+	}
 	
 	find(data: T, newOptions: ModelOptions = {}): Promise<T[]> {
-		const txModelOptions = this.obtainTransactionModelOptionsAndAddData(data, newOptions);
 		return new Promise<T[]>((resolve: Function, reject: Function) => {
-			const authError = this.isSearchAuthorized(txModelOptions);
-			if (ObjectUtil.isPresent(authError)) {
-				reject(new Error(authError));
-				return;
+			const txModelOptions = this.obtainTransactionModelOptions(newOptions);
+			const authorizationResponse = this.isSearchAuthorized(txModelOptions);
+			if (!authorizationResponse.isAuthorized) {
+				return reject(new Error(authorizationResponse.errorMessage));
 			}
+			this.addAuthorizationDataPreSearch(txModelOptions);	
+			this.transactionModelOptionsAddData(data, txModelOptions);	
 			const search = this.obtainSearchExpression(data, txModelOptions);
-			ObjectUtil.merge(search, { deletedAt: { $exists: false }});
 			this.Model.find(search, txModelOptions.projection,
 			 { sort: '-createdAt', lean: true }).populate(txModelOptions.population)
 			.exec((err, foundObjs) => {
 				if (err) {
-					reject(err);
-					return;
+					return reject(err);
 				}
 				resolve(foundObjs);
 			});
 		});
 	}
-
 	
 	findOneById(id: string, newOptions: ModelOptions = {}): Promise<T> {
-		const txModelOptions = this.obtainTransactionModelOptions(newOptions);
 		return new Promise<T>((resolve: Function, reject: Function) => {
-			const authError = this.isSearchAuthorized(txModelOptions);
-			if (ObjectUtil.isPresent(authError)) {
-				reject(new Error(authError));
-				return;
+			const txModelOptions = this.obtainTransactionModelOptions(newOptions);
+			const authorizationResponse = this.isSearchAuthorized(txModelOptions);
+			if (!authorizationResponse.isAuthorized) {
+				return reject(new Error(authorizationResponse.errorMessage));
 			}
 			this.Model.findById(id, txModelOptions.projection, { lean: true }).populate(txModelOptions.population)
-			.exec((err, foundObj) => {
+			.exec((err: Error, foundObj: T) => {
 				if (err) {
-					reject(err);
-					return;
+					return reject(err);
 				}
-				if (ObjectUtil.isBlank(foundObj) || ObjectUtil.isPresent(foundObj['deletedAt'])) {
-					reject(new Error('Object not found'));
-					return;
+				if (ObjectUtil.isBlank(foundObj)) {
+					return reject(new Error('Object not found'));
 				}
+				
+				if (txModelOptions.validatePostSearchAuthData) {
+					const authorizationResponse = this.validateAuthDataPostSearch(txModelOptions, foundObj);
+					if (!authorizationResponse.isAuthorized) {
+						return reject(new Error(authorizationResponse.errorMessage));
+					}
+				}
+				
 				resolve(foundObj);
 			});
 		});
 	}
 	
 	exist(data: T, newOptions: ModelOptions = {}): Promise<boolean> {
-		const txModelOptions = this.obtainTransactionModelOptionsAndAddData(data, newOptions);
 		return new Promise<boolean>((resolve: Function, reject: Function) => {
+			const txModelOptions = this.obtainTransactionModelOptions(newOptions);
+			this.transactionModelOptionsAddData(data, txModelOptions);	
 			if (Object.keys(data).length < 1) {
 				reject(new Error('At least one filter value should be specified'));
 			}
-			const search = ObjectUtil.createFilter(data, false);
-			ObjectUtil.merge(search, { deletedAt: { $exists: false }});
-			this.Model.findOne(search, null, { sort: '-createdAt', lean: true })
+			this.Model.findOne(ObjectUtil.createFilter(data, false), null, { sort: '-createdAt', lean: true })
 			.exec((err, foundObj) => {
 				if (err) {
-					reject(err);
-					return;
-				}
-				if (ObjectUtil.isBlank(foundObj) || ObjectUtil.isPresent(foundObj['deletedAt'])) {
-					reject(new Error('Object not found'));
-					return;
+					return reject(err);
 				}
 				resolve(ObjectUtil.isPresent(foundObj));
 			});
@@ -187,82 +333,76 @@ export abstract class BaseService<T extends BaseDto> extends BaseAuthorizationSe
 	}
 	
 	findOne(data: T, newOptions: ModelOptions = {}): Promise<T[]> {
-		const txModelOptions = this.obtainTransactionModelOptionsAndAddData(data, newOptions);
 		return new Promise<T[]>((resolve: Function, reject: Function) => {
-			const authError = this.isSearchAuthorized(txModelOptions);			
-			if (ObjectUtil.isPresent(authError)) {
-				reject(new Error(authError));
-				return;
+			const txModelOptions = this.obtainTransactionModelOptions(newOptions);
+			const authorizationResponse = this.isSearchAuthorized(txModelOptions);	
+			if (!authorizationResponse.isAuthorized) {
+				return reject(new Error(authorizationResponse.errorMessage));
 			}
+			
+			this.addAuthorizationDataPreSearch(txModelOptions);	
+			this.transactionModelOptionsAddData(data, txModelOptions);	
 			const search = this.obtainSearchExpression(data, txModelOptions);
 			if (Object.keys(search).length < 1) {
-				reject(new Error('At least one filter value should be specified'));
+				return reject(new Error('At least one filter value should be specified'));
 			}
-			ObjectUtil.merge(search, { deletedAt: { $exists: false }});
+			
 			this.Model.findOne(search, txModelOptions.projection,
 			 { sort: '-createdAt', lean: true }).populate(txModelOptions.population)
-			.exec((err, foundObj) => {
+			.exec((err: Error, foundObj: T) => {
 				if (err) {
-					reject(err);
-					return;
+					return reject(err);
 				}
-				if (ObjectUtil.isBlank(foundObj) || ObjectUtil.isPresent(foundObj['deletedAt'])) {
-					reject(new Error('Object not found'));
-					return;
+				if (ObjectUtil.isBlank(foundObj)) {
+					return reject(new Error('Object not found'));
 				}
+				
+				if (txModelOptions.validatePostSearchAuthData) {
+					const authorizationResponse = this.validateAuthDataPostSearch(txModelOptions, foundObj);
+					if (!authorizationResponse.isAuthorized) {
+						return reject(new Error(authorizationResponse.errorMessage));
+					}
+				}
+				
 				resolve(foundObj);
 			});
 		});
 	}
 	
 	findDistinct(data: T, newOptions: ModelOptions = {}): Promise<string[]> {
-		const txModelOptions = this.obtainTransactionModelOptionsAndAddData(data, newOptions);
 		return new Promise<string[]>((resolve: Function, reject: Function) => {
-			const authError = this.isSearchAuthorized(txModelOptions);
-			if (ObjectUtil.isPresent(authError)) {
-				reject(new Error(authError));
+			const txModelOptions = this.obtainTransactionModelOptions(newOptions);
+			const authorizationResponse = this.isSearchAuthorized(txModelOptions);
+			if (!authorizationResponse.isAuthorized) {
+				return reject(new Error(authorizationResponse.errorMessage));
 			}
-			const search = this.obtainSearchExpression(data);
-			ObjectUtil.merge(search, { deletedAt: { $exists: false }});
+			this.addAuthorizationDataPreSearch(txModelOptions);	
+			this.transactionModelOptionsAddData(data, txModelOptions);	
+			const search = this.obtainSearchExpression(data, txModelOptions);
 			this.Model.find(search).distinct(txModelOptions.distinct)
 			.exec((err, foundObjs) => {
 				if (err) {
-					reject(err);
-					return;
+					return reject(err);
 				}
 				resolve(foundObjs);
 			});
 		});
 	}
 	
-	protected obtainTransactionModelOptions(newOptions: ModelOptions = {}): ModelOptions {	
-		const transactionOptions: ModelOptions = {};
-		ObjectUtil.merge(transactionOptions, this.options); 
+	protected obtainTransactionModelOptions(newOptions: ModelOptions = {}): ModelOptions {
+		const transactionOptions: ModelOptions = ObjectUtil.clone(this.options);
 		ObjectUtil.merge(transactionOptions, newOptions);
 		return transactionOptions;
 	}
 	
-	protected obtainTransactionModelOptionsAndAddData(data: T, newOptions: ModelOptions = {}): ModelOptions {	
-		const transactionOptions: ModelOptions = this.obtainTransactionModelOptions(newOptions);
+	protected transactionModelOptionsAddData(data: T, transactionOptions: ModelOptions = {}) {	
 		ObjectUtil.merge(data, transactionOptions.additionalData); // Adds additionalData if specified
-		this.copySignificantAuthorizationData(data, transactionOptions);
-		return transactionOptions;
 	}
 	
 	protected obtainSearchExpression(data: T, modelOptions: ModelOptions = {}): any {
 		const search = ObjectUtil.createFilter(data, modelOptions.regularExpresion);
-		if (modelOptions.specialAuthorizationDataSearch) {
-			ObjectUtil.merge(modelOptions.complexSearch, this.obtainComplexAuthorizationSearchExpression(data, modelOptions.authorization));
-		}
 		ObjectUtil.merge(search, modelOptions.complexSearch);
 		return search;	
-	}
-	
-	protected obtainComplexAuthorizationSearchExpression(data: T, authorization: AuthorizationData = {}): any {
-		return {};	
-	}
-	
-	protected copySignificantAuthorizationData(data: T, modelOptions: ModelOptions = {}): void {
 	}
 	
 }

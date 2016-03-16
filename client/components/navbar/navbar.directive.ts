@@ -22,4 +22,9 @@ export class NavbarController {
   constructor(moment: moment.MomentStatic, private AuthToken: any, private $state: any) {
     this.relativeDate = moment(this.creationDate).fromNow();
   }
+  
+  logout() {
+    this.AuthToken.setToken();
+    this.$state.go('login');
+  }
 }

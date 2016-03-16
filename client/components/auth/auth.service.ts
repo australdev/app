@@ -14,12 +14,28 @@ namespace AuthServices {
 		getToken(): any {
 			return this.$window.localStorage.getItem('token') || undefined;
 		}
-		
 		isLoggedIn(): boolean {
-			return (this.$window.localStorage.getItem('token') !== null)  ;
+			return (this.$window.localStorage.getItem('token') !== null);
 		}
 		logout() {
 			this.$window.localStorage.removeItem('token');
+		}
+		setInvitation(inv: any) {
+			if (inv) {
+				this.$window.localStorage.setItem('invitation', inv);
+			} else {
+				this.$window.localStorage.removeItem('invitation');
+			}
+		}
+		getInvitation(): any {
+			return this.$window.localStorage.getItem('invitation') || undefined;
+		}
+		getInvitationUrlParam(): any {
+			const urlParams = {};
+			if (this.getInvitation()) {
+				urlParams['inv'] = this.getInvitation();
+			}
+			return urlParams;
 		}
 	}
 

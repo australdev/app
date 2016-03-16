@@ -15,7 +15,16 @@ const NON_SECURED_URL: string[] = ['/api/user/_exist',
 export class Authentication {
 
 	validate(req: express.Request, res: express.Response, next: Function) {
+		
 		req.body.austral = {};
+		
+		// Stores the invitation id or object in the AuthorizationData Object		
+		/*const invitation = (req.query.inv ? req.query.inv : req.body.inv);
+		if (ObjectUtil.isPresent(invitation)) {
+			req.body.cymplarRole['invitation'] = ObjectUtil.clone(invitation);
+			delete req.query.inv;
+			delete req.body.inv;
+		}*/
 		
 		if (NON_SECURED_URL.indexOf(req.originalUrl.split('?')[0]) > -1) {
 			return next();
@@ -26,14 +35,18 @@ export class Authentication {
 			|| (req.headers['authorization'] && req.headers['authorization'].split(' ')[1]))) || '';
 		
 		if (ObjectUtil.isBlank(token)) { 
-			return next(new Error('Invalid Token'));
+			return sendError(res, new Error('Token is required'), { token: false });
 		}
 		
-		try {
+		try {	
 			const decoded = decode(token, process.env.AUSTRAL_SECRET);
+		
+			if (ObjectUtil.isBlank(decoded.sub)) {
+				return sendError(res, new Error('Invalid Token'), { token: false });
+			}
 			
 			if (decoded.exp <= Date.now()) {
-				return next(new Error('Token expired'));
+				return sendError(res, new Error('Token expired'), { token: false });
 			}
 			
 			//query id_organization (ido), id_lead (idl)
@@ -43,23 +56,23 @@ export class Authentication {
 			};
 			
 			const userModelOptions: ModelOptions = {
-				requireAuthorization: false
+				requireAuthorization: false,
+				copyAuthorizationData: ''
 			}; 
 					
 			userService.findOneById(decoded.sub, userModelOptions)
 			.then((user: User) => {
-				if (user._id) {
+				if (ObjectUtil.isPresent(user)) {
 					req.body.austral.user = user;	
 				}
 				
 				return next();
 			})
 			.catch((err) => {
-				return next(err);
+				return sendError(res, err, { token: false });
 			});
-			
 		} catch (err) {
-			return next(new Error('Token could not be verified'));
+			return sendError(res, err, { token: false });
 		}
 	}
 }

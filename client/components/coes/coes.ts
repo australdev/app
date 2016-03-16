@@ -21,7 +21,7 @@ namespace coes {
 		const url_institution = '/api/institution';
 					
 		$stateProvider
-			.state('coes', {
+			.state('main.coes', {
 				// With abstract set to true, that means this state can not be explicitly activated.
 				// It can only be implicitly activated by activating one of its children.
 				abstract: true,
@@ -43,7 +43,7 @@ namespace coes {
 		
 			// Using a '.' within a state name declares a child within a parent.
 			// So you have a new state 'list' within the parent 'coes' state.
-			.state('coes.list', {
+			.state('main.coes.list', {
 		
 				// Using an empty url means that this child state will become active
 				// when its parent's url is navigated to. Urls of child states are
@@ -55,29 +55,36 @@ namespace coes {
 				// template will be inserted into the ui-view within this state's
 				// parent's template; so the ui-view within coes.html. This is the
 				// most important thing to remember about templates.
-				templateUrl: 'components/coes/coes.list.html',
-				
-				// You can pair a controller to your template. There *must* be a template to pair with.
-				controller: ['$scope', '$state', '$stateParams', '$http',
-				function($scope: any, $state: any, $stateParams: any, $http: angular.IHttpService) {
-					
-					$scope.texts.title = 'Coe';
-					
-					$scope.deleteCoe = function (data: any)  {
-						let result: boolean = confirm('Are you sure? All the information related to this coe will be lost!');
-						if (result) {
-							$http.delete(`${url}/${data.id}`).then((resp) => {
-								if (resp.data['success']) {
-									$state.go($state.current, {}, {reload: true});
-								}
+				views: {
+					// So this one is targeting the unnamed view within the parent state's template.
+					'': {
+						templateUrl: 'components/coes/coes.list.html',
+						
+						// You can pair a controller to your template. There *must* be a template to pair with.
+						controller: ['$scope', '$state', '$stateParams', '$http',
+						function($scope: any, $state: any, $stateParams: any, $http: angular.IHttpService, $toast: any) {
+							
+							$scope.texts.title = 'Coe';
+							
+							$scope.deleteCoe = function (data: any)  {
+								let result: boolean = confirm('Are you sure? All the information related to this coe will be lost!');
+								if (result) {
+									$http.delete(`${url}/${data.id}`).then((resp) => {
+										if (resp.data['success']) {
+											$state.go($state.current, {}, {reload: true});
+										} else {
+											
+										}
+									});
+								}; 
+							};
+							
+							$http.get(`${url}/_find`).then((resp) => {
+								$scope.coes = resp.data['data'];
 							});
-						}; 
-					};
-					
-					$http.get(`${url}/_find`).then((resp) => {
-						$scope.coes = resp.data['data'];
-					});
-				}]
+						}]
+					}
+				}
 			})
       
 			/////////////////////
@@ -86,7 +93,7 @@ namespace coes {
 		  
 			// Using a '.' within a state name declares a child within a parent.
 			// So you have a new state 'list' within the parent 'coes' state.
-			.state('coes.edit', {
+			.state('main.coes.edit', {
 				
 				// Using an empty url means that this child state will become active
 				// when its parent's url is navigated to. Urls of child states are
@@ -153,7 +160,7 @@ namespace coes {
 			
 			
 			
-			.state('coes.studyPeriods', {
+			.state('main.coes.studyPeriods', {
 				// With abstract set to true, that means this state can not be explicitly activated.
 				// It can only be implicitly activated by activating one of its children.
 				abstract: true,
@@ -171,7 +178,7 @@ namespace coes {
 		
 			// Using a '.' within a state name declares a child within a parent.
 			// So you have a new state 'list' within the parent 'studyPeriods' state.
-			.state('coes.studyPeriods.list', {
+			.state('main.coes.studyPeriods.list', {
 		
 				// Using an empty url means that this child state will become active
 				// when its parent's url is navigated to. Urls of child states are
@@ -225,7 +232,7 @@ namespace coes {
 		  
 			// Using a '.' within a state name declares a child within a parent.
 			// So you have a new state 'list' within the parent 'studyPeriods' state.
-			  .state('coes.studyPeriods.edit', {
+			  .state('main.coes.studyPeriods.edit', {
 				
 				// Using an empty url means that this child state will become active
 				// when its parent's url is navigated to. Urls of child states are
@@ -297,7 +304,7 @@ namespace coes {
 			// Payments 
 			/////////////////////
 			
-			.state('coes.studyPeriods.payments', {
+			.state('main.coes.studyPeriods.payments', {
 				// With abstract set to true, that means this state can not be explicitly activated.
 				// It can only be implicitly activated by activating one of its children.
 				abstract: true,
@@ -315,7 +322,7 @@ namespace coes {
 		
 			// Using a '.' within a state name declares a child within a parent.
 			// So you have a new state 'list' within the parent 'payments' state.
-			.state('coes.studyPeriods.payments.list', {
+			.state('main.coes.studyPeriods.payments.list', {
 		
 				// Using an empty url means that this child state will become active
 				// when its parent's url is navigated to. Urls of child states are
@@ -380,7 +387,7 @@ namespace coes {
 		  
 			// Using a '.' within a state name declares a child within a parent.
 			// So you have a new state 'list' within the parent 'payments' state.
-			  .state('coes.studyPeriods.payments.edit', {
+			  .state('main.coes.studyPeriods.payments.edit', {
 				
 				// Using an empty url means that this child state will become active
 				// when its parent's url is navigated to. Urls of child states are

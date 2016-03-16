@@ -9,9 +9,4 @@ export class MainController {
     this.toastr.info('Welcome');
   }
   
-  logout() {
-    this.AuthToken.setToken();
-    this.$state.go('login');
-  }
-  
 }

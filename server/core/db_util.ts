@@ -1,46 +1,28 @@
 import {Document} from 'mongoose';
 
-export class DocumentFlag {
-	name: string;
-	value: any;	
-}
-
 export class DatabaseObjectUtil {
 
-	static removeDocumentPromise(data: Document, flags: DocumentFlag[] = []): Promise<Document> {
+	static removeDocumentPromise(data: Document): Promise<Document> {
 		
-		return new Promise<Document>((resolve: Function, reject: Function) => {
-			
-			for (let prop in flags) {
-				const documentFlag: DocumentFlag = flags[prop];
-				data[documentFlag.name] = documentFlag.value;
-			}						
-			
+		return new Promise<Document>((resolve: Function, reject: Function) => {					
 			data.remove((err: Error) => {
 				if (err) {
-					reject(err);
-					return;
+					return reject(err);
 				}
 				resolve(data);
 			});
 		});
 	}
 	
-	static removeArrayPromise(data: Document[], flags: DocumentFlag[] = []): Promise<Document[]> {
+	static removeArrayPromise(data: Document[]): Promise<Document[]> {
 		return new Promise<Document[]>((resolve: Function, reject: Function) => {						
-			const promises: Promise<Document>[] = [];
-				
+			const docToRemovePromises: Promise<Document>[] = [];
 			data.forEach((doc) => {
-			 promises.push(this.removeDocumentPromise(doc, flags));		
+			 docToRemovePromises.push(this.removeDocumentPromise(doc));		
 			});
-			
-			Promise.all(promises)
-			.then((results: any) => {
-				resolve(results);
-			})
-			.catch((err: any) => {
-				reject(err);
-			});	
+			Promise.all(docToRemovePromises)
+			.then((results: any) => resolve(results))
+			.catch((err) => reject(err));	
 		});
 	}
 }

@@ -1,82 +1,85 @@
 import {Model, Document} from 'mongoose';
 
-import {BaseDto, ModelOptions, AuthorizationData} from '../../client/core/dto';
+import {BaseDto, ModelOptions, AuthorizationData, AuthorizationResponse} from '../../client/core/dto';
 import {ObjectUtil} from '../../client/core/util';
 import {DatabaseObjectUtil} from './db_util';
 
 export class BaseAuthorizationService<T extends BaseDto>{
 	
-	protected isCreateAuthorized(modelOptions: ModelOptions = {}, data?: T): any {
+	protected isCreateAuthorized(modelOptions: ModelOptions): AuthorizationResponse {
+		return this.authorizationEntity(modelOptions);
+	}
+	
+	protected isUpdateAuthorized(modelOptions: ModelOptions): AuthorizationResponse {
+		return this.authorizationEntity(modelOptions);
+	}
+	
+	protected isRemoveAuthorized(modelOptions: ModelOptions): AuthorizationResponse {
+		return this.authorizationEntity(modelOptions);
+	}
+	
+	protected isSearchAuthorized(modelOptions: ModelOptions): AuthorizationResponse {
+		return this.authorizationEntity(modelOptions);
+	}
+	
+	protected authorizationEntity(modelOptions: ModelOptions = {}, roles: string[] = []): AuthorizationResponse {
 		if (modelOptions.requireAuthorization) {
-			return this.evaluateCreationAuthorization(modelOptions, data);
+			if (!this.existsUser(modelOptions.authorization)) {
+				return this.createAuthorizationResponse('Base Authorization: Unauthorized user');
+			}
 		}
+		return this.createAuthorizationResponse();
 	}
 	
-	protected evaluateCreationAuthorization(modelOptions: ModelOptions = {}, data?: T): any {
-		if (!this.existsUser(modelOptions.authorization)) {
-			return 'Unauthorized user';
+	protected createAuthorizationResponse(message?: string): AuthorizationResponse {
+		const authorizationResponse: AuthorizationResponse = { isAuthorized: true };
+		if (ObjectUtil.isPresent(message)) {
+			authorizationResponse['isAuthorized'] = false;
+			authorizationResponse['errorMessage'] = message;
 		}
-	}
-	
-	protected isUpdateAuthorized(modelOptions: ModelOptions = {}, data?: T): any {
-		if (modelOptions.requireAuthorization) {
-			return this.evaluateUpdateAuthorization(modelOptions, data);
-		}
-	}
-	
-	protected evaluateUpdateAuthorization(modelOptions: ModelOptions = {}, data?: T): any {
-		if (!this.existsUser(modelOptions.authorization)) {
-			return 'Unauthorized user';
-		}
-	}
-	
-	protected isRemoveAuthorized(modelOptions: ModelOptions = {}, data?: T): any {
-		if (modelOptions.requireAuthorization) {
-			return this.evaluateRemoveAuthorization(modelOptions, data);
-		}
-	}
-	
-	protected evaluateRemoveAuthorization(modelOptions: ModelOptions = {}, data?: T): any {
-		if (!this.existsUser(modelOptions.authorization)) {
-			return 'Unauthorized user';
-		}
-	}
-	
-	protected isSearchAuthorized(modelOptions: ModelOptions = {}, data?: T): any {
-		if (modelOptions.requireAuthorization) {
-			return this.evaluateSearchAuthorization(modelOptions, data);
-		}
-	}
-	
-	protected evaluateSearchAuthorization(modelOptions: ModelOptions = {}, data?: T): any {
-		if (!this.existsUser(modelOptions.authorization)) {
-			return 'Unauthorized user';
-		}
-	}
-		
-	protected isUpdateAuthorizedExecution(modelOptions: ModelOptions = {}, data?: T): any {
-		if (!modelOptions.requireAuthorization) {
-			return this.evaluateUpdateExecutionAuthorization(modelOptions, data);
-		}
-	}
-	
-	protected evaluateUpdateExecutionAuthorization(modelOptions: ModelOptions = {}, data?: T): any {
-	}
-	
-	protected isRemoveAuthorizedExecution(modelOptions: ModelOptions = {}, data?: T): any {
-		if (!modelOptions.requireAuthorization) {
-			return this.evaluateRemoveExecutionAuthorization(modelOptions, data);
-		}
-	}
-	
-	protected evaluateRemoveExecutionAuthorization(modelOptions: ModelOptions = {}, data?: T): any {
+		return authorizationResponse;	
 	}
 	
 	protected existsUser(authorization: AuthorizationData): boolean {
 		if (ObjectUtil.isBlank(authorization) || ObjectUtil.isBlank(authorization.user)) {
-			return false;
+				return false;
 		}
 		return true;
 	}
-
+	
+	/* tslint:disable */ // In this switches the default is not needed
+	protected addAuthorizationDataInCreate(modelOptions: ModelOptions = {}, data?: T) {
+		switch (modelOptions.copyAuthorizationData) {
+			case 'user':
+				modelOptions.additionalData['user'] = modelOptions.authorization.user._id;
+				break;
+			case 'createdBy':
+				modelOptions.additionalData['createdBy'] = modelOptions.authorization.user._id;
+				break;
+		}
+	}
+	
+	protected addAuthorizationDataPreSearch(modelOptions: ModelOptions = {}, data?: T) {
+		switch (modelOptions.copyAuthorizationData) {
+			case 'user':
+				modelOptions.additionalData['user'] = modelOptions.authorization.user._id;
+				break;
+			case 'createdBy':
+				modelOptions.additionalData['createdBy'] = modelOptions.authorization.user._id;
+				break;
+		}
+	}
+	/* tslint:enable */
+	
+	protected validateAuthDataPostSearchUpdate(modelOptions: ModelOptions = {}, data?: T): AuthorizationResponse {
+		return this.createAuthorizationResponse();
+	}
+	
+	protected validateAuthDataPostSearchRemove(modelOptions: ModelOptions = {}, data?: T): AuthorizationResponse {
+		return this.createAuthorizationResponse();
+	}
+	
+	protected validateAuthDataPostSearch(modelOptions: ModelOptions = {}, data?: T): AuthorizationResponse {
+		return this.createAuthorizationResponse();
+	}
 }

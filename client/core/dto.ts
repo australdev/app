@@ -61,9 +61,9 @@ export interface ModelOptions {
   distinct?: any;
   authorization?: AuthorizationData;
   requireAuthorization?: boolean;
-  copyAuthorizationData?: boolean;
-  copyOptionalAuthorizationData?: boolean;
-  specialAuthorizationDataSearch?: boolean;
+  copyAuthorizationData?: string;
+  onlyValidateParentAuthorization?: boolean;
+  validatePostSearchAuthData?: boolean;
 }
 
 export interface Coe extends BaseDto {
@@ -195,4 +195,11 @@ export interface Periodicity extends BaseDto {
 export interface AuthorizationResponse {
   isAuthorized: boolean;
   errorMessage?: string;
+}
+
+export interface SocketNotification extends BaseDto {
+  from?: string | User;
+  message?: string;
+  parentsData?: any;
+  data?: any;
 }

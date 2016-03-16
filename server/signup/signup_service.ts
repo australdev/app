@@ -11,27 +11,29 @@ import {SignUp, User, ModelOptions, AuthenticationResponse} from '../../client/c
 
 
 export class SignupService {
-	
+
 	createOne(data: SignUp = {}, options: ModelOptions = {}): Promise<AuthenticationResponse> {
+		
 		return new Promise<AuthenticationResponse>((fulfill: Function, reject: Function) => {
-		options.requireAuthorization = false; // As it doesn't need authorization validation it can be skipped
+			options.requireAuthorization = false; // As it doesn't need authorization validation it can be skipped
+			options.copyAuthorizationData = '';
+					
 		userService.createOne(data.user, options)
 		.then((user: User) => {
 			data._id = user._id;
-			const response = {
+			const response: AuthenticationResponse = {
 				token: loginService.getToken(data.user)
 			};
-			fulfill(response);
-		})
-		.catch((err) => {
-			if (ObjectUtil.isPresent(data._id)) {
-				userService.removeOneById(data._id, options);
-			} 
-			reject(err); 
+				fulfill(response); 
+			})
+			.catch((err) => {
+				if (ObjectUtil.isPresent(data._id)) {
+					userService.removeOneById(data._id, options);
+				}
+				reject(err); 
 			});
 		});
 	}
-	
 }
  
 export const signupService = new SignupService();

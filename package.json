@@ -4,17 +4,16 @@
   "description": "austral version",
   "repository": {
     "type": "git",
-    "url": "https://github.com/australdev/austral-app.git"
+    "url": "https://github.com/australdev/app.git"
   },
   "bugs": {
-    "url": "https://github.com/australdev/austral-app/issues"
+    "url": "https://github.com/australdev/app/issues"
   },
   "scripts": {
     "postinstall": "bower install && tsd reinstall --clean && tsd link && tsd rebundle && gulp postinstall",
     "start": "gulp serve --env dev",
     "test": "gulp test"
   },
-  "author": "JP",
   "private": true,
   "devDependencies": {
     "async": "^1.5.0",
@@ -63,6 +62,7 @@
   "dependencies": {
     "angular": "^1.4.8",
     "angular-animate": "^1.4.8",
+    "angular-bootstrap": "^0.12.2",
     "angular-cookies": "^1.4.8",
     "angular-messages": "^1.4.8",
     "angular-resource": "^1.4.8",
@@ -74,7 +74,6 @@
     "body-parser": "^1.14.1",
     "bootstrap": "^3.3.6",
     "bootstrap-sass": "^3.3.6",
-    "bower": "^1.6.8",
     "connect-livereload": "^0.5.4",
     "es6-shim": "^0.33.13",
     "express": "^4.13.3",
@@ -83,7 +82,10 @@
     "mongoose": "^4.3.0",
     "node-safe-filesaver": "^0.1.0",
     "requirejs": "^2.1.22",
+    "sendgrid": "^2.0.0",
     "serve-static": "^1.10.0",
+    "socket.io": "^1.4.5",
+    "socket.io-client": "^1.4.5",
     "systemjs": "^0.19.6",
     "xlsx": "^0.8.0"
   },

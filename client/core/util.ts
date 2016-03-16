@@ -1,3 +1,5 @@
+import {BaseDto} from '../../client/core/dto';
+
 export class ObjectUtil {
 
 	private static _seq = 0;
@@ -63,7 +65,7 @@ export class ObjectUtil {
 			}
 		}
 		return filters;
-		}
+	}
 
 	static getNumber(data: number): number {
 		 if (data === undefined || data === null) {
@@ -72,6 +74,23 @@ export class ObjectUtil {
 		 
 		 return data;
 	}
-
+	
+	static getBaseDtoObject(data: any, property = '_id'): any {
+		if (ObjectUtil.isPresent(data[property])) {
+			return data;
+		} else {
+			const baseDtoObject = {};
+			baseDtoObject[property] = data;
+			return baseDtoObject;
+		}
+	}
+	
+	static getStringUnionProperty(data: any, property = '_id'): string {
+		if (ObjectUtil.isPresent(data[property])) {
+			return data[property];
+		} else {
+			return data;
+		}
+	}
 }
 

@@ -7,20 +7,28 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
       </button>
-      <a ui-sref="main" class="navbar-brand">Home</a>
+      <!-- <a ui-sref="main.main" class="navbar-brand">Home</a>
     </div>
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="main_navbar">
       <ul class="nav navbar-nav">
-        <li ng-class="{active: $state.includes('paymentTypes')}"><a ui-sref="paymentTypes.list">Payment Types</a></li>
-        <li ng-class="{active: $state.includes('frequencies')}"><a ui-sref="frequencies.list">Frequencies</a></li>
-        <li ng-class="{active: $state.includes('app.students')}"><a ui-sref="students.list">Students</a></li>
-        <li ng-class="{active: $state.includes('paymentTypes')}"><a ui-sref="courseTypes.list">Course Types</a></li>
-        <li ng-class="{active: $state.includes('institutions')}"><a ui-sref="institutions.list">Institutions</a></li>
-        <li ng-class="{active: $state.includes('coes,coes.studyPeriods,coes.studyPeriods.payments')}"><a ui-sref="coes.list">Coes</a></li>
-        <li ng-class="{active: $state.includes('payments')}"><a ui-sref="payments.list">Payments</a></li>
-        <li ng-class="{active: $state.includes('balances')}"><a ui-sref="balances.list">Balance</a></li>
+        <li ng-class="{active: vm.$state.includes('main.paymentTypes')}"><a ui-sref="main.paymentTypes.list">Payment Types</a></li>
+        <li ng-class="{active: vm.$state.includes('main.frequencies')}"><a ui-sref="main.frequencies.list">Frequencies</a></li>
+        <li ng-class="{active: vm.$state.includes('main.students')}"><a ui-sref="main.students.list">Students</a></li>
+        <li ng-class="{active: vm.$state.includes('main.courseTypes')}"><a ui-sref="main.courseTypes.list">Course Types</a></li>
+        <li ng-class="{active: vm.$state.includes('main.institutions')}"><a ui-sref="main.institutions.list">Institutions</a></li>
+        <li ng-class="{active: vm.$state.includes('main.coes')}"><a ui-sref="main.coes.list">Coes</a></li>
+        <li ng-class="{active: vm.$state.includes('main.payments')}"><a ui-sref="main.payments.list">Payments</a></li>
+        <li ng-class="{active: vm.$state.includes('main.balances')}"><a ui-sref="main.balances.list">Balance</a></li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li class="btn-danger" ng-click="vm.logout()"><a ui-sref="login">Log Out</a></a></li>
       </ul>
     </div>
+    
 </nav>

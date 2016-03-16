@@ -32,7 +32,8 @@
 		}
 	}
 }
-
-.main-container {
-	margin-top: 50px; 
+.create-btn {
+	&:visited {
+		color:#fff;
+	}	
 }

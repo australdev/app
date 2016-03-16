@@ -28,7 +28,7 @@ namespace HelperServices {
 			}
 			/**
 			 * Using custom promise and $q to DRY up some of the code ,
-			 *  everything will be handled in the success call in controller 
+			 *  everything will be handle in the success call in controller 
 			 * with more descriptive error message
 			 */
 			resource[method](params, (response: any) => {
@@ -41,10 +41,11 @@ namespace HelperServices {
 					this.loadingModal.close();
 					error.data.status = error.status;
 				}
-	
+				
 				if (error.data.token === false) {
 					this.$rootScope.$broadcast('badToken', {data: 'Illegal token access'});
 				}
+			
 				error.data.statusText = error.statusText;
 				deferred.resolve(error.data);
 			});
@@ -52,8 +53,20 @@ namespace HelperServices {
 			return deferred.promise;
 		}
 	};
-
+	export class ultiHelper {
+		indexOfFromId(arr: any[], obj: any) {
+			
+			for	(let i = 0; i < arr.length; i++) {
+				if (arr[i]._id === obj._id) {
+					return i;
+				}
+			}
+			
+			return -1;
+		}
+	}
 	angular
 		.module('app.helper', [])
-		.service('$resourceHelper', $resourceHelper);
+		.service('$resourceHelper', $resourceHelper)
+		.service('ultiHelper', ultiHelper);
 }

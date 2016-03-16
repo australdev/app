@@ -25,15 +25,16 @@ namespace Login {
 			private $SignUpRESTService: any, private AuthToken: any, private $state: any) {
 			
 		};
-			
+		
 		login() {
 			this.$LoginRESTService.accountLogin(this.loginDetails).then((response: any) => {
-			
+				
 				this.loginError = !response.success;
 				this.errorMessage = response.msg;
 				if (response.success) {
 					this.AuthToken.setToken(response.data.token);
-					this.$state.transitionTo('main');
+					const urlInvParam = this.AuthToken.getInvitationUrlParam();
+					this.$state.transitionTo('main', urlInvParam);
 				}
 			});
 		}

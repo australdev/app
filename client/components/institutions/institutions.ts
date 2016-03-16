@@ -11,7 +11,7 @@ namespace institutions {
 		const url = '/api/institution';
 					
 		$stateProvider
-			.state('institutions', {
+			.state('main.institutions', {
 				// With abstract set to true, that means this state can not be explicitly activated.
 				// It can only be implicitly activated by activating one of its children.
 				abstract: true,
@@ -35,7 +35,7 @@ namespace institutions {
 		
 			// Using a '.' within a state name declares a child within a parent.
 			// So you have a new state 'list' within the parent 'institutions' state.
-			.state('institutions.list', {
+			.state('main.institutions.list', {
 		
 				// Using an empty url means that this child state will become active
 				// when its parent's url is navigated to. Urls of child states are
@@ -43,31 +43,36 @@ namespace institutions {
 				// url is '/institutions' (because '/institutions' + '').
 				url: '',
 		
-				// IMPORTANT: Now we have a state that is not a top level state. Its
-				// template will be inserted into the ui-view within this state's
-				// parent's template; so the ui-view within institutions.html. This is the
-				// most important thing to remember about templates.
-				templateUrl: 'components/institutions/institutions.list.html',
-				
-				// You can pair a controller to your template. There *must* be a template to pair with.
-				controller: ['$scope', '$state', '$stateParams', '$http',
-				function($scope: any, $state: any, $stateParams: any, $http: angular.IHttpService) {
-					
-					$scope.deleteInstitution = function (data: any)  {
-						let result: boolean = confirm('Are you sure? All the information related to this institution will be lost!');
-						if (result) {
-							$http.delete(`${url}/${data.id}`).then((resp) => {
-								if (resp.data['success']) {
-									$state.go($state.current, {}, {reload: true});
-								}
+				views: {
+					// So this one is targeting the unnamed view within the parent state's template.
+					'': {
+						// IMPORTANT: Now we have a state that is not a top level state. Its
+						// template will be inserted into the ui-view within this state's
+						// parent's template; so the ui-view within institutions.html. This is the
+						// most important thing to remember about templates.
+						templateUrl: 'components/institutions/institutions.list.html',
+						
+						// You can pair a controller to your template. There *must* be a template to pair with.
+						controller: ['$scope', '$state', '$stateParams', '$http',
+						function($scope: any, $state: any, $stateParams: any, $http: angular.IHttpService) {
+							
+							$scope.deleteInstitution = function (data: any)  {
+								let result: boolean = confirm('Are you sure? All the information related to this institution will be lost!');
+								if (result) {
+									$http.delete(`${url}/${data.id}`).then((resp) => {
+										if (resp.data['success']) {
+											$state.go($state.current, {}, {reload: true});
+										}
+									});
+								} 
+							};
+							
+							$http.get(`${url}/_find`).then((resp) => {
+								$scope.institutions = resp.data['data'];
 							});
-						} 
-					};
-					
-					$http.get(`${url}/_find`).then((resp) => {
-						$scope.institutions = resp.data['data'];
-					});
-				}]
+						}]
+					}
+				}
 			})
       
 			/////////////////////
@@ -76,7 +81,7 @@ namespace institutions {
 		  
 			// Using a '.' within a state name declares a child within a parent.
 			// So you have a new state 'list' within the parent 'institutions' state.
-			  .state('institutions.edit', {
+			  .state('main.institutions.edit', {
 				
 				// Using an empty url means that this child state will become active
 				// when its parent's url is navigated to. Urls of child states are
@@ -98,13 +103,13 @@ namespace institutions {
 						if (institution._id) {           
 							$http.put(`${url}/${institution._id}`, institution).then((resp) => {
 								if (resp.data['success']) {
-									$state.go('institutions.list');
+									$state.go('main.institutions.list');
 								}
 							});  
 					  	} else {
 							$http.post(`${url}`, institution).then((resp) => {
 								if (resp.data['success']) {
-									$state.go('institutions.list');
+									$state.go('main.institutions.list');
 								}
 							});
 					  	}

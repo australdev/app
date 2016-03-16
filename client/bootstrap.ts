@@ -35,7 +35,7 @@ namespace app {
       } else { // should not be logged in
         if (AuthToken.isLoggedIn()) { // prevent double log in
           event.preventDefault();
-          $state.go('main', {}, { reload: true });
+          $state.go('main.balances.list', {}, { reload: true });
         }
 
       }
@@ -43,10 +43,8 @@ namespace app {
       });
 
     $rootScope.$on('badToken', (event: any, data: any) => {
-      console.log(data);
       AuthToken.logout();
       $state.go('login', {}, { reload: true });
-
     });
 
     
@@ -56,7 +54,6 @@ namespace app {
     // to active whenever 'contacts.list' or one of its decendents is active.
     $rootScope['$state'] = $state;
     $rootScope['$stateParams'] = $stateParams;
-
     $log.debug('runBlock end');
   }
 
@@ -80,15 +77,13 @@ namespace app {
   function routerConfig($stateProvider: angular.ui.IStateProvider, $urlRouterProvider: angular.ui.IUrlRouterProvider) {
     $stateProvider
       .state('main', {
-        url: '/',
+        abstract: true,
         templateUrl: 'components/main/main.html',
         controller: 'MainController',
         controllerAs: 'main'
       });
 
-    $urlRouterProvider.otherwise('/');
-      
-
+    $urlRouterProvider.otherwise('/balances');
   }
 
   angular.module('app', [
